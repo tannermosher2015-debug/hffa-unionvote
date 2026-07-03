@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>HFFA Local 1463 - PAC Board Vote</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      color: #0d1f3c;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    .page-hdr { background: #0d1f3c; padding: 20px 16px; text-align: center; }
+    .hdr-badge {
+      display: inline-block;
+      background: #c8a951;
+      color: #0d1f3c;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      padding: 3px 9px;
+      border-radius: 3px;
+      margin-bottom: 8px;
+    }
+    .hdr-title { color: #fff; font-size: 20px; font-weight: 700; }
+    .hdr-sub   { color: #c8a951; font-size: 12px; margin-top: 4px; }
+
+    .body { padding: 16px 14px 110px; max-width: 560px; margin: 0 auto; }
+
+    /* Name */
+    .name-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid #dde1e8;
+      margin-bottom: 20px;
+    }
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      margin-bottom: 7px;
+      color: #0d1f3c;
+    }
+    .name-input {
+      width: 100%;
+      padding: 11px 13px;
+      border-radius: 7px;
+      border: 1.5px solid #dde1e8;
+      font-size: 16px;
+      color: #0d1f3c;
+      outline: none;
+      font-family: inherit;
+    }
+    .name-input:focus { border-color: #0d1f3c; }
+
+    /* Division card */
+    .slate-card {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #dde1e8;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .slate-hdr {
+      background: #0d1f3c;
+      color: #fff;
+      padding: 11px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .slate-hdr span {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      color: #c8a951;
+      margin-top: 2px;
+    }
+    .slate-list { padding: 4px 16px; }
+
+    /* Candidate row + per-candidate vote */
+    .cand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .cand-row:last-child { border-bottom: none; }
+    .cand-info { min-width: 0; }
+    .cand-name     { font-size: 14px; font-weight: 600; color: #0d1f3c; }
+    .cand-district { font-size: 11px; color: #6b7280; margin-top: 1px; }
+
+    .cand-votes { display: flex; gap: 6px; flex-shrink: 0; }
+    .vbtn { cursor: pointer; }
+    .vbtn input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .vbtn span {
+      display: block;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.1s;
+    }
+    .vbtn.approve span { background: #eaf4ec; color: #1b6b2f; border-color: #c3e6cb; }
+    .vbtn.approve:has(input:checked) span { background: #1b6b2f; color: #fff; border-color: #1b6b2f; }
+    .vbtn.deny span { background: #fdecea; color: #8b1a1a; border-color: #f5c6cb; }
+    .vbtn.deny:has(input:checked) span { background: #8b1a1a; color: #fff; border-color: #8b1a1a; }
+    .vbtn:has(input:focus-visible) span { outline: 2px solid #0d1f3c; outline-offset: 2px; }
+
+    .cand-row.missing {
+      outline: 2px solid #8b1a1a;
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    /* Error */
+    .error-msg {
+      background: #fdecea;
+      border: 1px solid #f5c6cb;
+      border-radius: 7px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #8b1a1a;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    /* Submit */
+    .submit-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #fff;
+      border-top: 1px solid #dde1e8;
+      padding: 10px 16px;
+      padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    }
+    .submit-inner { max-width: 560px; margin: 0 auto; }
+    .progress {
+      font-size: 12px;
+      font-weight: 700;
+      color: #6b7280;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .progress.done { color: #1b6b2f; }
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: #0d1f3c;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    /* Success */
+    .success-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .success-screen.show { display: flex; }
+    .check-circle {
+      width: 60px; height: 60px;
+      background: #1b6b2f;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .check-circle svg { width: 30px; height: 30px; }
+    .success-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .success-sub   { font-size: 14px; color: #6b7280; line-height: 1.5; max-width: 280px; }
+    .btn-again {
+      margin-top: 24px;
+      padding: 11px 24px;
+      background: transparent;
+      color: #0d1f3c;
+      border: 1.5px solid #0d1f3c;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Access gate -->
+<div id="gateScreen">
+  <header class="page-hdr">
+    <div class="hdr-badge">IAFF LOCAL 1463</div>
+    <div class="hdr-title">PAC Endorsement Board Vote</div>
+    <div class="hdr-sub">Members only - enter the access password</div>
+  </header>
+  <main class="body">
+    <div class="name-card">
+      <label class="field-label" for="gatePass">Access Password</label>
+      <input class="name-input" id="gatePass" type="password" placeholder="Enter password" autocomplete="off" autofocus>
+      <button class="btn-submit" style="margin-top:12px" onclick="checkGate()">Enter</button>
+      <div class="error-msg" id="gateErr" style="margin-top:12px">Incorrect password.</div>
+    </div>
+  </main>
+</div>
+
+<!-- Success -->
+<div class="success-screen" id="successScreen">
+  <div class="check-circle">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"
+      stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  </div>
+  <div class="success-title">Vote Submitted</div>
+  <p class="success-sub">Your vote has been recorded. The PAC chair can view the running tally on the results page.</p>
+  <button class="btn-again" onclick="location.reload()">Submit Another Vote</button>
+</div>
+
+<!-- Main -->
+<div id="mainForm" style="display:none">
+  <header class="page-hdr">
+    <div class="hdr-badge">IAFF LOCAL 1463</div>
+    <div class="hdr-title">PAC Endorsement Board Vote</div>
+    <div class="hdr-sub">Approve or deny each candidate</div>
+  </header>
+
+  <main class="body">
+    <div class="error-msg" id="errorMsg">Please fill in your name and vote on every candidate.</div>
+
+    <form id="voteForm">
+      <input type="text" name="bot-field" style="display:none" tabindex="-1" aria-hidden="true">
+
+      <div class="name-card">
+        <label class="field-label" for="voterName">Your Full Name</label>
+        <input class="name-input" id="voterName" name="voter-name"
+          type="text" placeholder="First and last name" autocomplete="name" required>
+      </div>
+
+      <section class="slate-card">
+        <h2 class="slate-hdr" id="mauiHdr">Maui Division<span>Vote on each candidate</span></h2>
+        <div class="slate-list" id="mauiList"></div>
+      </section>
+
+      <section class="slate-card">
+        <h2 class="slate-hdr" id="biHdr">Hawaii Island Division<span>Vote on each candidate</span></h2>
+        <div class="slate-list" id="biList"></div>
+      </section>
+    </form>
+  </main>
+
+  <div class="submit-bar">
+    <div class="submit-inner">
+      <div class="progress" id="progress">0 of 0 selected</div>
+      <button class="btn-submit" onclick="submitVote()">Submit My Vote</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// PAC recommendation rosters. Each candidate is voted on individually.
+const MAUI = [
+  { name: 'Troy N. Hashimoto', district: 'Senate Dist. 5 · D' },
+  { name: 'Justin H. Woodson', district: 'House Dist. 9 · D' },
+  { name: 'Tyson K. Miyake', district: 'House Dist. 10 · D' },
+  { name: 'Kyle T. Yamashita', district: 'House Dist. 12 · D' },
+  { name: 'Mahinamalamalama M. Poepoe', district: 'House Dist. 13 · D' },
+  { name: 'Richard T. Bissen Jr.', district: 'Maui Mayor · NP' },
+  { name: 'Shane M. Sinenci', district: 'Council – East Maui · NP' },
+  { name: 'Tamara A.M. Paltin', district: 'Council – West Maui · NP' },
+  { name: 'Kelson Kauanoe Batangan', district: 'Council – Kahului · NP' },
+  { name: 'Thomas M. Cook', district: 'Council – South Maui · NP' },
+  { name: 'Nohelani M.T. U‘u-Hodgins', district: 'Council – Makawao-Haiku-Paia · NP' },
+  { name: 'Gabriel L. Johnson', district: 'Council – Lana‘i · NP' },
+  { name: 'Keani N.W. Rawlins-Fernandez', district: 'Council – Moloka‘i · NP' },
+];
+const BI = [
+  { name: 'Joy San Buenaventura', district: 'Senate Dist. 2' },
+  { name: 'Matthias Kusch', district: 'House Dist. 1' },
+  { name: 'Sue Lee Loy', district: 'House Dist. 2' },
+  { name: 'Christopher Todd', district: 'House Dist. 3' },
+  { name: 'Greggor Ilagan', district: 'House Dist. 4' },
+  { name: 'Jeanne Kapela', district: 'House Dist. 5' },
+  { name: 'Kirsten Kahaloa', district: 'House Dist. 6' },
+  { name: 'Nicole Lowen', district: 'House Dist. 7' },
+  { name: 'David Tarnas', district: 'House Dist. 8' },
+  { name: 'Heather Kimball', district: 'Council Dist. 1' },
+  { name: 'Dennis “Fresh” Onishi', district: 'Council Dist. 3' },
+  { name: 'Holeka Inaba', district: 'Council Dist. 8' },
+  { name: 'James Hustace', district: 'Council Dist. 9' },
+];
+const TOTAL = MAUI.length + BI.length;
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, function(c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+function rowHtml(prefix, i, c) {
+  const nm = prefix + i;
+  return '<div class="cand-row" data-row="' + nm + '">' +
+      '<div class="cand-info">' +
+        '<div class="cand-name">' + esc(c.name) + '</div>' +
+        '<div class="cand-district">' + esc(c.district) + '</div>' +
+      '</div>' +
+      '<div class="cand-votes" role="radiogroup" aria-label="' + esc(c.name) + '">' +
+        '<label class="vbtn approve"><input type="radio" name="' + nm + '" value="Approve"><span>Approve</span></label>' +
+        '<label class="vbtn deny"><input type="radio" name="' + nm + '" value="Deny"><span>Deny</span></label>' +
+      '</div>' +
+    '</div>';
+}
+
+function renderRoster() {
+  document.getElementById('mauiList').innerHTML = MAUI.map(function(c, i) { return rowHtml('m', i, c); }).join('');
+  document.getElementById('biList').innerHTML = BI.map(function(c, i) { return rowHtml('b', i, c); }).join('');
+  updateProgress();
+}
+
+function updateProgress() {
+  const n = document.querySelectorAll('.cand-votes input:checked').length;
+  const el = document.getElementById('progress');
+  el.textContent = n + ' of ' + TOTAL + ' selected';
+  el.classList.toggle('done', n === TOTAL);
+}
+
+document.addEventListener('change', function(e) {
+  if (e.target.matches('.cand-votes input')) {
+    e.target.closest('.cand-row').classList.remove('missing');
+    updateProgress();
+  }
+});
+
+function getVote(prefix, i) {
+  const el = document.querySelector('input[name="' + prefix + i + '"]:checked');
+  return el ? el.value : null;
+}
+
+async function submitVote() {
+  const errorMsg = document.getElementById('errorMsg');
+  const nameVal  = document.getElementById('voterName').value.trim();
+  errorMsg.classList.remove('show');
+  document.getElementById('voterName').style.borderColor = '';
+
+  let firstMissing = null, missingCount = 0;
+  if (!nameVal) {
+    document.getElementById('voterName').style.borderColor = '#8b1a1a';
+    firstMissing = document.getElementById('voterName');
+  }
+
+  const votes = [];
+  function collect(prefix, arr, division) {
+    arr.forEach(function(c, i) {
+      const v = getVote(prefix, i);
+      const row = document.querySelector('.cand-row[data-row="' + prefix + i + '"]');
+      if (!v) {
+        row.classList.add('missing');
+        missingCount++;
+        if (!firstMissing) firstMissing = row;
+      } else {
+        row.classList.remove('missing');
+        votes.push({ division: division, name: c.name, district: c.district, vote: v });
+      }
+    });
+  }
+  collect('m', MAUI, 'Maui');
+  collect('b', BI, 'Hawaii Island');
+
+  if (firstMissing) {
+    if (missingCount) {
+      errorMsg.textContent = (nameVal ? 'Vote' : 'Enter your name and vote') +
+        ' on ' + missingCount + ' remaining candidate' + (missingCount === 1 ? '' : 's') + '.';
+    } else {
+      errorMsg.textContent = 'Please enter your full name.';
+    }
+    errorMsg.classList.add('show');
+    firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const botField = document.querySelector('input[name="bot-field"]').value;
+  try {
+    const res = await fetch('/api/vote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-vote-pass': votePass },
+      body: JSON.stringify({ voterName: nameVal, votes: votes, botField: botField }),
+    });
+    if (!res.ok) throw new Error('Submission rejected');
+    document.getElementById('mainForm').style.display = 'none';
+    document.getElementById('successScreen').classList.add('show');
+    window.scrollTo(0, 0);
+  } catch (e) {
+    alert('Submission failed. Check your connection and try again.');
+  }
+}
+
+// Access gate
+let votePass = "";
+async function checkGate() {
+  votePass = document.getElementById('gatePass').value;
+  const err = document.getElementById('gateErr');
+  err.classList.remove('show');
+  try {
+    const res = await fetch('/api/vote?check=1', { headers: { 'x-vote-pass': votePass } });
+    if (res.status === 401) { err.textContent = 'Incorrect password.'; err.classList.add('show'); return; }
+    if (!res.ok) throw new Error('failed');
+    document.getElementById('gateScreen').style.display = 'none';
+    document.getElementById('mainForm').style.display = '';
+    renderRoster();
+    document.getElementById('voterName').focus();
+  } catch (e) {
+    err.textContent = 'Could not verify. Check your connection and try again.';
+    err.classList.add('show');
+  }
+}
+document.getElementById('gatePass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkGate();
+});
+</script>
+</body>
+</html>
