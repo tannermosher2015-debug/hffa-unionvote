@@ -197,6 +197,16 @@
       .seg-opt:hover input:not(:checked) + span { color: var(--ink); }
     }
 
+    /* Deadline notice */
+    .deadline {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--gold-soft); border: 1px solid var(--gold-line);
+      border-radius: var(--r-sm); padding: 11px 14px;
+      font-size: 13px; font-weight: 700; color: var(--navy);
+      text-align: center; margin-bottom: 16px;
+    }
+    .deadline svg { width: 15px; height: 15px; flex-shrink: 0; }
+
     /* Error banner */
     .error-msg {
       display: none; background: var(--deny-bg); border: 1px solid var(--deny-line);
@@ -279,6 +289,10 @@
   </header>
   <main class="body" id="gateMain">
     <p class="intro"><span class="intro-title">Members only</span><br><span class="intro-sub">Enter the access password to open your ballot.</span></p>
+    <div class="deadline" role="alert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Voting must be completed by 10:00 AM HST on Thursday, July&nbsp;9</span>
+    </div>
     <div class="panel">
       <label class="field-label" for="gatePass">Access Password</label>
       <input class="input" id="gatePass" type="password" placeholder="Enter password" autocomplete="off" autofocus>
@@ -313,6 +327,11 @@
 
   <main class="body" id="ballot">
     <p class="intro"><span class="intro-title">Approve or deny each candidate</span><br><span class="intro-sub">A vote is required on every candidate in all four divisions.</span></p>
+
+    <div class="deadline" role="alert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Voting must be completed by 10:00 AM HST on Thursday, July&nbsp;9</span>
+    </div>
 
     <div class="error-msg" id="errorMsg" role="alert">Please fill in your name and vote on every candidate.</div>
 
