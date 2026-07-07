@@ -42,25 +42,9 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: "Storage not configured." });
   }
 
-  // Password gate (FAIL-CLOSED). If RESULTS_PASSWORD is not configured, refuse to
-  // serve the tally rather than exposing every vote publicly. Once set, the caller
-  // must present the matching x-results-pass header.
-  const required = process.env.RESULTS_PASSWORD;
-  if (!required) {
-    return res.status(500).json({ error: "Results are not configured yet." });
-  }
-  const provided =
-    req.headers["x-results-pass"] || req.headers["X-Results-Pass"] || "";
-  if (provided !== required) {
-    return res
-      .status(401)
-      .json({ error: "Enter the results password to view the tally." });
-  }
-
-  // Lightweight credential check for the login screen (no payload).
-  if (req.query && req.query.check) {
-    return res.status(200).json({ ok: true });
-  }
+  // Results are intentionally OPEN (no password) — the tally and voter list are
+  // viewable by anyone with the link. The page is noindex/nofollow so it is not
+  // crawled, but it is not access-controlled. This was a deliberate choice.
 
   try {
     const keys = await redis("KEYS", "pac:vote:*");

@@ -4,302 +4,343 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>HFFA Local 1463 - PAC Board Vote</title>
+  <meta name="theme-color" content="#0d1f3c">
+  <title>IAFF Local 1463 - PAC Endorsement Board Vote</title>
   <style>
+    :root {
+      --navy: #0d1f3c;
+      --navy-700: #14294d;
+      --navy-500: #24406e;
+      --gold: #c8a951;
+      --gold-bright: #d8be6f;
+      --gold-soft: rgba(200, 169, 81, 0.14);
+      --gold-line: rgba(200, 169, 81, 0.38);
+      --ink: #0d1f3c;
+      --muted: #5b6577;
+      --line: #e5e9f0;
+      --line-soft: #eef1f6;
+      --bg: #eceff4;
+      --card: #ffffff;
+      --approve: #16642a;
+      --approve-bg: #e7f2ea;
+      --approve-line: #bfe0c8;
+      --deny: #92211d;
+      --deny-bg: #fbe9e7;
+      --deny-line: #f2c9c4;
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 16px;
+      --shadow: 0 1px 2px rgba(13, 31, 60, 0.06), 0 8px 24px rgba(13, 31, 60, 0.06);
+      --shadow-sm: 0 1px 2px rgba(13, 31, 60, 0.08);
+      --sp: 8px;
+      --font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { -webkit-text-size-adjust: 100%; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      background: #f0f2f5;
+      font-family: var(--font);
+      background: var(--bg);
       min-height: 100vh;
-      color: #0d1f3c;
-      -webkit-text-size-adjust: 100%;
+      color: var(--ink);
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
 
-    .page-hdr { background: #0d1f3c; padding: 20px 16px; text-align: center; }
-    .hdr-badge {
-      display: inline-block;
-      background: #c8a951;
-      color: #0d1f3c;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      padding: 3px 9px;
-      border-radius: 3px;
-      margin-bottom: 8px;
+    /* Skip link */
+    .skip-link {
+      position: absolute; left: 12px; top: -48px;
+      background: var(--gold); color: var(--navy);
+      font-size: 13px; font-weight: 700; padding: 9px 14px;
+      border-radius: var(--r-sm); z-index: 50;
+      transition: top 0.15s ease;
     }
-    .hdr-title { color: #fff; font-size: 20px; font-weight: 700; }
-    .hdr-sub   { color: #c8a951; font-size: 12px; margin-top: 4px; }
+    .skip-link:focus { top: 12px; outline: 3px solid #fff; outline-offset: 2px; }
+
+    /* ---- Header ---- */
+    .page-hdr {
+      position: sticky; top: 0; z-index: 20;
+      background:
+        radial-gradient(120% 140% at 50% -40%, var(--navy-500) 0%, rgba(36,64,110,0) 55%),
+        linear-gradient(180deg, var(--navy-700) 0%, var(--navy) 100%);
+      border-bottom: 2px solid var(--gold);
+      padding: 18px 16px 15px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(13, 31, 60, 0.16);
+    }
+    .hdr-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--gold); font-size: 10.5px; font-weight: 800;
+      letter-spacing: 2.4px; text-transform: uppercase;
+    }
+    .hdr-eyebrow::before, .hdr-eyebrow::after {
+      content: ""; width: 16px; height: 1px; background: var(--gold-line);
+    }
+    .hdr-org {
+      color: #fff; font-size: 18px; font-weight: 800;
+      letter-spacing: 0.2px; margin-top: 7px; line-height: 1.2;
+    }
+    .hdr-rule {
+      width: 34px; height: 2px; background: var(--gold);
+      border-radius: 2px; margin: 10px auto 9px; opacity: 0.85;
+    }
+    .hdr-context {
+      color: rgba(255, 255, 255, 0.72); font-size: 12.5px; font-weight: 500;
+      letter-spacing: 0.2px;
+    }
     .hdr-count {
-      display: inline-block;
-      background: rgba(200, 169, 81, 0.15);
-      color: #c8a951;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      padding: 4px 12px;
-      border-radius: 20px;
-      border: 1px solid rgba(200, 169, 81, 0.35);
-      margin-top: 10px;
+      display: none; margin-top: 12px;
+      color: var(--navy); background: var(--gold);
+      font-size: 11.5px; font-weight: 800; letter-spacing: 0.4px;
+      padding: 5px 14px; border-radius: 999px;
     }
 
-    .body { padding: 16px 14px 110px; max-width: 560px; margin: 0 auto; }
+    /* ---- Layout ---- */
+    .body { padding: 20px 15px 128px; max-width: 600px; margin: 0 auto; }
 
-    /* Name */
-    .name-card {
-      background: #fff;
-      border-radius: 8px;
-      padding: 16px;
-      border: 1px solid #dde1e8;
-      margin-bottom: 20px;
+    .intro { text-align: center; margin: 4px 0 18px; }
+    .intro-title { font-size: 15px; font-weight: 700; color: var(--ink); }
+    .intro-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+    /* Name / access card */
+    .panel {
+      background: var(--card); border-radius: var(--r-md);
+      padding: 18px; border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm); margin-bottom: 20px;
     }
     .field-label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      margin-bottom: 7px;
-      color: #0d1f3c;
+      display: block; font-size: 11.5px; font-weight: 800;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
     }
-    .name-input {
-      width: 100%;
-      padding: 11px 13px;
-      border-radius: 7px;
-      border: 1.5px solid #dde1e8;
-      font-size: 16px;
-      color: #0d1f3c;
-      outline: none;
-      font-family: inherit;
+    .input {
+      width: 100%; padding: 13px 14px; border-radius: var(--r-sm);
+      border: 1.5px solid var(--line); font-size: 16px;
+      color: var(--ink); outline: none; font-family: inherit;
+      background: #fcfdfe; transition: border-color 0.12s, box-shadow 0.12s;
     }
-    .name-input:focus { border-color: #0d1f3c; }
+    .input::placeholder { color: #9aa3b2; }
+    .input:focus { border-color: var(--navy-500); box-shadow: 0 0 0 3px rgba(36, 64, 110, 0.14); }
 
-    /* Division card */
-    .slate-card {
-      background: #fff;
-      border-radius: 8px;
-      border: 1px solid #dde1e8;
-      margin-bottom: 20px;
-      overflow: hidden;
+    /* ---- Division card ---- */
+    .slate {
+      background: var(--card); border-radius: var(--r-md);
+      border: 1px solid var(--line); box-shadow: var(--shadow);
+      margin-bottom: 18px; overflow: hidden;
     }
     .slate-hdr {
-      background: #0d1f3c;
-      color: #fff;
-      padding: 11px 16px;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 10px; background: var(--navy); color: #fff;
+      padding: 13px 16px;
     }
-    .slate-hdr span {
-      display: block;
-      font-size: 11px;
-      font-weight: 400;
-      color: #c8a951;
-      margin-top: 2px;
+    .slate-hdr h2 { font-size: 14.5px; font-weight: 800; letter-spacing: 0.2px; }
+    .slate-hdr .slate-note {
+      color: var(--gold); font-size: 10.5px; font-weight: 600;
+      letter-spacing: 0.4px; text-transform: uppercase; white-space: nowrap;
     }
-    .slate-list { padding: 4px 16px; }
+    .slate-list { padding: 2px 16px; }
 
-    /* Candidate row + per-candidate vote */
-    .cand-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 11px 0;
-      border-bottom: 1px solid #f3f4f6;
+    /* Candidate row */
+    .cand {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line-soft);
     }
-    .cand-row:last-child { border-bottom: none; }
+    .cand:last-child { border-bottom: none; }
     .cand-info { min-width: 0; }
-    .cand-name     { font-size: 14px; font-weight: 600; color: #0d1f3c; }
-    .cand-district { font-size: 11px; color: #6b7280; margin-top: 1px; }
-
-    .cand-votes { display: flex; gap: 6px; flex-shrink: 0; }
-    .vbtn { cursor: pointer; }
-    .vbtn input { position: absolute; opacity: 0; width: 0; height: 0; }
-    .vbtn span {
-      display: block;
-      padding: 8px 12px;
+    .cand-name { font-size: 14.5px; font-weight: 700; color: var(--ink); letter-spacing: 0.1px; }
+    .cand-seat {
+      display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+      font-size: 11.5px; color: var(--muted); margin-top: 3px;
+    }
+    .chip {
+      display: inline-block; font-size: 9.5px; font-weight: 800;
+      letter-spacing: 0.6px; text-transform: uppercase;
+      color: var(--navy-500); background: var(--gold-soft);
+      border: 1px solid var(--gold-line); border-radius: 4px;
+      padding: 1px 6px;
+    }
+    .cand.missing {
+      outline: 2px solid var(--deny); outline-offset: 4px;
       border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      border: 2px solid transparent;
+    }
+
+    /* Segmented Approve / Deny control */
+    .seg {
+      display: inline-flex; flex-shrink: 0;
+      background: #f1f3f7; border: 1px solid var(--line);
+      border-radius: 999px; padding: 3px;
+    }
+    .seg-opt { position: relative; cursor: pointer; }
+    .seg-opt input {
+      position: absolute; opacity: 0; width: 100%; height: 100%;
+      left: 0; top: 0; margin: 0; cursor: pointer;
+    }
+    .seg-opt span {
+      display: block; min-width: 62px; text-align: center;
+      padding: 9px 14px; border-radius: 999px;
+      font-size: 12.5px; font-weight: 700; color: var(--muted);
+      transition: background 0.14s, color 0.14s, box-shadow 0.14s;
       white-space: nowrap;
-      transition: all 0.1s;
     }
-    .vbtn.approve span { background: #eaf4ec; color: #1b6b2f; border-color: #c3e6cb; }
-    .vbtn.approve:has(input:checked) span { background: #1b6b2f; color: #fff; border-color: #1b6b2f; }
-    .vbtn.deny span { background: #fdecea; color: #8b1a1a; border-color: #f5c6cb; }
-    .vbtn.deny:has(input:checked) span { background: #8b1a1a; color: #fff; border-color: #8b1a1a; }
-    .vbtn:has(input:focus-visible) span { outline: 2px solid #0d1f3c; outline-offset: 2px; }
-
-    .cand-row.missing {
-      outline: 2px solid #8b1a1a;
-      outline-offset: 2px;
-      border-radius: 6px;
+    .seg-opt.approve:has(input:checked) span {
+      background: var(--approve); color: #fff;
+      box-shadow: 0 1px 3px rgba(22, 100, 42, 0.4);
+    }
+    .seg-opt.deny:has(input:checked) span {
+      background: var(--deny); color: #fff;
+      box-shadow: 0 1px 3px rgba(146, 33, 29, 0.4);
+    }
+    .seg-opt:has(input:focus-visible) span { outline: 2px solid var(--navy-500); outline-offset: 2px; }
+    @media (hover: hover) {
+      .seg-opt:hover input:not(:checked) + span { color: var(--ink); }
     }
 
-    /* Error */
+    /* Error banner */
     .error-msg {
-      background: #fdecea;
-      border: 1px solid #f5c6cb;
-      border-radius: 7px;
-      padding: 12px 14px;
-      font-size: 13px;
-      color: #8b1a1a;
-      font-weight: 600;
-      margin-bottom: 16px;
-      display: none;
+      display: none; background: var(--deny-bg); border: 1px solid var(--deny-line);
+      border-radius: var(--r-sm); padding: 12px 14px; font-size: 13px;
+      color: var(--deny); font-weight: 600; margin-bottom: 16px;
     }
     .error-msg.show { display: block; }
 
-    /* Submit */
+    /* ---- Submit bar ---- */
     .submit-bar {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: #fff;
-      border-top: 1px solid #dde1e8;
-      padding: 10px 16px;
-      padding-bottom: calc(10px + env(safe-area-inset-bottom));
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 15;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: saturate(1.4) blur(10px);
+      border-top: 1px solid var(--line);
+      padding: 11px 16px calc(11px + env(safe-area-inset-bottom));
+      box-shadow: 0 -6px 20px rgba(13, 31, 60, 0.07);
     }
-    .submit-inner { max-width: 560px; margin: 0 auto; }
-    .progress {
-      font-size: 12px;
-      font-weight: 700;
-      color: #6b7280;
-      text-align: center;
-      margin-bottom: 8px;
+    .submit-inner { max-width: 600px; margin: 0 auto; }
+    .meter { height: 5px; background: #e6e9f0; border-radius: 999px; overflow: hidden; margin-bottom: 9px; }
+    .meter span {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-bright) 100%);
+      border-radius: 999px; transition: width 0.25s ease;
     }
-    .progress.done { color: #1b6b2f; }
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: #0d1f3c;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
+    .progress { font-size: 12px; font-weight: 700; color: var(--muted); text-align: center; margin-bottom: 9px; }
+    .progress.done { color: var(--approve); }
+    .btn {
+      width: 100%; padding: 14px; border: none; border-radius: var(--r-sm);
+      background: var(--navy); color: #fff; font-size: 15px; font-weight: 800;
+      letter-spacing: 0.3px; font-family: inherit; cursor: pointer;
+      transition: background 0.14s, transform 0.05s;
     }
+    .btn:hover { background: var(--navy-700); }
+    .btn:active { transform: translateY(1px); }
+    .btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+    .btn-block { margin-top: 14px; }
 
-    /* Success */
-    .success-screen {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 32px 24px;
-      text-align: center;
+    /* ---- Success ---- */
+    .success {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 32px 24px; text-align: center;
     }
-    .success-screen.show { display: flex; }
-    .check-circle {
-      width: 60px; height: 60px;
-      background: #1b6b2f;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
+    .success.show { display: flex; }
+    .check {
+      width: 68px; height: 68px; background: var(--approve);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 22px; box-shadow: 0 8px 24px rgba(22, 100, 42, 0.3);
     }
-    .check-circle svg { width: 30px; height: 30px; }
-    .success-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-    .success-sub   { font-size: 14px; color: #6b7280; line-height: 1.5; max-width: 280px; }
+    .check svg { width: 32px; height: 32px; }
+    .success-title { font-size: 23px; font-weight: 800; letter-spacing: 0.2px; margin-bottom: 8px; }
+    .success-sub { font-size: 14px; color: var(--muted); line-height: 1.55; max-width: 300px; }
     .success-count {
-      margin-top: 16px;
-      background: #eaf4ec;
-      color: #1b6b2f;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 8px 20px;
-      border-radius: 20px;
-      border: 1px solid #c3e6cb;
+      margin-top: 18px; background: var(--approve-bg); color: var(--approve);
+      font-size: 13.5px; font-weight: 800; padding: 8px 20px; border-radius: 999px;
+      border: 1px solid var(--approve-line);
     }
     .btn-again {
-      margin-top: 24px;
-      padding: 11px 24px;
-      background: transparent;
-      color: #0d1f3c;
-      border: 1.5px solid #0d1f3c;
-      border-radius: 7px;
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
+      margin-top: 26px; padding: 12px 26px; background: transparent;
+      color: var(--navy); border: 1.5px solid var(--navy); border-radius: var(--r-sm);
+      font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer;
+    }
+    .btn-again:hover { background: var(--navy); color: #fff; }
+    .btn-again:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
     }
   </style>
 </head>
 <body>
+<a class="skip-link" href="#ballot">Skip to ballot</a>
 
 <!-- Access gate -->
 <div id="gateScreen">
   <header class="page-hdr">
-    <div class="hdr-badge">IAFF LOCAL 1463</div>
-    <div class="hdr-title">PAC Endorsement Board Vote</div>
-    <div class="hdr-sub">Members only - enter the access password</div>
+    <div class="hdr-eyebrow">IAFF Local 1463</div>
+    <div class="hdr-org">Hawaii Fire Fighters Association</div>
+    <div class="hdr-rule"></div>
+    <div class="hdr-context">PAC Endorsement Board Vote</div>
   </header>
-  <main class="body">
-    <div class="name-card">
+  <main class="body" id="gateMain">
+    <p class="intro"><span class="intro-title">Members only</span><br><span class="intro-sub">Enter the access password to open your ballot.</span></p>
+    <div class="panel">
       <label class="field-label" for="gatePass">Access Password</label>
-      <input class="name-input" id="gatePass" type="password" placeholder="Enter password" autocomplete="off" autofocus>
-      <button class="btn-submit" style="margin-top:12px" onclick="checkGate()">Enter</button>
-      <div class="error-msg" id="gateErr" style="margin-top:12px">Incorrect password.</div>
+      <input class="input" id="gatePass" type="password" placeholder="Enter password" autocomplete="off" autofocus>
+      <button class="btn btn-block" onclick="checkGate()">Enter</button>
+      <div class="error-msg" id="gateErr" role="alert" style="margin-top:12px">Incorrect password.</div>
     </div>
   </main>
 </div>
 
 <!-- Success -->
-<div class="success-screen" id="successScreen">
-  <div class="check-circle">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"
-      stroke-linecap="round" stroke-linejoin="round">
+<div class="success" id="successScreen" role="status">
+  <div class="check">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <polyline points="20 6 9 17 4 12"/>
     </svg>
   </div>
-  <div class="success-title">Vote Submitted</div>
+  <h1 class="success-title">Vote Submitted</h1>
   <p class="success-sub">Your vote has been recorded. The PAC chair can view the running tally on the results page.</p>
   <div class="success-count" id="successCount"></div>
   <button class="btn-again" onclick="location.reload()">Submit Another Vote</button>
 </div>
 
-<!-- Main -->
+<!-- Main ballot -->
 <div id="mainForm" style="display:none">
   <header class="page-hdr">
-    <div class="hdr-badge">IAFF LOCAL 1463</div>
-    <div class="hdr-title">PAC Endorsement Board Vote</div>
-    <div class="hdr-sub">Approve or deny each candidate</div>
-    <div class="hdr-count" id="ballotCount" style="display:none"></div>
+    <div class="hdr-eyebrow">IAFF Local 1463</div>
+    <div class="hdr-org">Hawaii Fire Fighters Association</div>
+    <div class="hdr-rule"></div>
+    <div class="hdr-context">PAC Endorsement Board Vote</div>
+    <div class="hdr-count" id="ballotCount"></div>
   </header>
 
-  <main class="body">
-    <div class="error-msg" id="errorMsg">Please fill in your name and vote on every candidate.</div>
+  <main class="body" id="ballot">
+    <p class="intro"><span class="intro-title">Approve or deny each candidate</span><br><span class="intro-sub">A vote is required on every candidate in all four divisions.</span></p>
 
-    <form id="voteForm">
+    <div class="error-msg" id="errorMsg" role="alert">Please fill in your name and vote on every candidate.</div>
+
+    <form id="voteForm" onsubmit="return false">
       <input type="text" name="bot-field" style="display:none" tabindex="-1" aria-hidden="true">
 
-      <div class="name-card">
+      <div class="panel">
         <label class="field-label" for="voterName">Your Full Name</label>
-        <input class="name-input" id="voterName" name="voter-name"
-          type="text" placeholder="First and last name" autocomplete="name" required>
+        <input class="input" id="voterName" name="voter-name" type="text" placeholder="First and last name" autocomplete="name" required>
       </div>
 
-      <section class="slate-card">
-        <h2 class="slate-hdr" id="mauiHdr">Maui Division<span>Vote on each candidate</span></h2>
+      <section class="slate" aria-labelledby="mauiHdr">
+        <div class="slate-hdr"><h2 id="mauiHdr">Maui Division</h2><span class="slate-note">Approve / Deny each</span></div>
         <div class="slate-list" id="mauiList"></div>
       </section>
 
-      <section class="slate-card">
-        <h2 class="slate-hdr" id="biHdr">Hawaii Island Division<span>Vote on each candidate</span></h2>
+      <section class="slate" aria-labelledby="biHdr">
+        <div class="slate-hdr"><h2 id="biHdr">Hawaii Island Division</h2><span class="slate-note">Approve / Deny each</span></div>
         <div class="slate-list" id="biList"></div>
       </section>
 
-      <section class="slate-card">
-        <h2 class="slate-hdr" id="kauaiHdr">Kauai County<span>Vote on each candidate</span></h2>
+      <section class="slate" aria-labelledby="kauaiHdr">
+        <div class="slate-hdr"><h2 id="kauaiHdr">Kauai County</h2><span class="slate-note">Approve / Deny each</span></div>
         <div class="slate-list" id="kauaiList"></div>
       </section>
 
-      <section class="slate-card">
-        <h2 class="slate-hdr" id="oahuHdr">Oahu Division<span>Vote on each candidate</span></h2>
+      <section class="slate" aria-labelledby="oahuHdr">
+        <div class="slate-hdr"><h2 id="oahuHdr">Oahu Division</h2><span class="slate-note">Approve / Deny each</span></div>
         <div class="slate-list" id="oahuList"></div>
       </section>
     </form>
@@ -307,8 +348,9 @@
 
   <div class="submit-bar">
     <div class="submit-inner">
-      <div class="progress" id="progress">0 of 0 selected</div>
-      <button class="btn-submit" onclick="submitVote()">Submit My Vote</button>
+      <div class="meter" aria-hidden="true"><span id="meterFill"></span></div>
+      <div class="progress" id="progress" aria-live="polite">0 of 0 selected</div>
+      <button class="btn" onclick="submitVote()">Submit My Vote</button>
     </div>
   </div>
 </div>
@@ -377,14 +419,18 @@ function esc(s) {
 
 function rowHtml(prefix, i, c) {
   const nm = prefix + i;
-  return '<div class="cand-row" data-row="' + nm + '">' +
+  const parts = String(c.district).split(' · ');
+  const seat = esc(parts[0]);
+  const party = parts.length > 1 ? esc(parts.slice(1).join(' · ')) : '';
+  const chip = party ? '<span class="chip">' + party + '</span>' : '';
+  return '<div class="cand" data-row="' + nm + '">' +
       '<div class="cand-info">' +
         '<div class="cand-name">' + esc(c.name) + '</div>' +
-        '<div class="cand-district">' + esc(c.district) + '</div>' +
+        '<div class="cand-seat">' + seat + chip + '</div>' +
       '</div>' +
-      '<div class="cand-votes" role="radiogroup" aria-label="' + esc(c.name) + '">' +
-        '<label class="vbtn approve"><input type="radio" name="' + nm + '" value="Approve"><span>Approve</span></label>' +
-        '<label class="vbtn deny"><input type="radio" name="' + nm + '" value="Deny"><span>Deny</span></label>' +
+      '<div class="seg" role="radiogroup" aria-label="Vote on ' + esc(c.name) + '">' +
+        '<label class="seg-opt approve"><input type="radio" name="' + nm + '" value="Approve"><span>Approve</span></label>' +
+        '<label class="seg-opt deny"><input type="radio" name="' + nm + '" value="Deny"><span>Deny</span></label>' +
       '</div>' +
     '</div>';
 }
@@ -398,15 +444,17 @@ function renderRoster() {
 }
 
 function updateProgress() {
-  const n = document.querySelectorAll('.cand-votes input:checked').length;
+  const n = document.querySelectorAll('.seg input:checked').length;
   const el = document.getElementById('progress');
   el.textContent = n + ' of ' + TOTAL + ' selected';
   el.classList.toggle('done', n === TOTAL);
+  const fill = document.getElementById('meterFill');
+  if (fill) fill.style.width = (TOTAL ? (n / TOTAL * 100) : 0) + '%';
 }
 
 document.addEventListener('change', function(e) {
-  if (e.target.matches('.cand-votes input')) {
-    e.target.closest('.cand-row').classList.remove('missing');
+  if (e.target.matches('.seg input')) {
+    e.target.closest('.cand').classList.remove('missing');
     updateProgress();
   }
 });
@@ -425,7 +473,7 @@ async function fetchCount() {
     const n = typeof d.count === 'number' ? d.count : 0;
     const label = n + ' ballot' + (n === 1 ? '' : 's') + ' cast';
     const el = document.getElementById('ballotCount');
-    if (el) { el.textContent = label; el.style.display = ''; }
+    if (el) { el.textContent = label; el.style.display = 'inline-block'; }
     const sc = document.getElementById('successCount');
     if (sc) sc.textContent = label;
   } catch (e) { /* silent fail — counter is non-critical */ }
@@ -439,7 +487,7 @@ async function submitVote() {
 
   let firstMissing = null, missingCount = 0;
   if (!nameVal) {
-    document.getElementById('voterName').style.borderColor = '#8b1a1a';
+    document.getElementById('voterName').style.borderColor = '#92211d';
     firstMissing = document.getElementById('voterName');
   }
 
@@ -447,7 +495,7 @@ async function submitVote() {
   function collect(prefix, arr, division) {
     arr.forEach(function(c, i) {
       const v = getVote(prefix, i);
-      const row = document.querySelector('.cand-row[data-row="' + prefix + i + '"]');
+      const row = document.querySelector('.cand[data-row="' + prefix + i + '"]');
       if (!v) {
         row.classList.add('missing');
         missingCount++;
@@ -471,7 +519,8 @@ async function submitVote() {
       errorMsg.textContent = 'Please enter your full name.';
     }
     errorMsg.classList.add('show');
-    firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    firstMissing.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
     return;
   }
 

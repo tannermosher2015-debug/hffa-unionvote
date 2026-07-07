@@ -4,121 +4,167 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>HFFA Local 1463 — PAC Board Vote Results</title>
+  <meta name="theme-color" content="#0d1f3c">
+  <title>IAFF Local 1463 - PAC Endorsement Board Vote Results</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f0f2f5; min-height: 100vh; color: #0d1f3c; }
-    .page-hdr { background: #0d1f3c; padding: 20px 16px; text-align: center; }
-    .hdr-badge { display: inline-block; background: #c8a951; color: #0d1f3c; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; padding: 3px 9px; border-radius: 3px; margin-bottom: 8px; }
-    .hdr-title { color: #fff; font-size: 20px; font-weight: 700; }
-    .body { padding: 16px 14px 40px; max-width: 560px; margin: 0 auto; }
-    .card { background: #fff; border-radius: 8px; padding: 16px; border: 1px solid #dde1e8; margin-bottom: 16px; }
-    .field-label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 7px; }
-    input[type="password"] { width: 100%; padding: 11px 13px; border-radius: 7px; border: 1.5px solid #dde1e8; font-size: 16px; color: #0d1f3c; outline: none; font-family: inherit; }
-    input[type="password"]:focus { border-color: #0d1f3c; }
-    .btn { width: 100%; margin-top: 12px; padding: 13px; background: #0d1f3c; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; }
-    .err { color: #8b1a1a; font-size: 13px; font-weight: 600; margin-top: 10px; display: none; }
-    .err.show { display: block; }
-    .tally-hdr { background: #0d1f3c; color: #fff; padding: 11px 16px; font-size: 14px; font-weight: 700; border-radius: 8px 8px 0 0; }
-    .tally-row { display: flex; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #eef1f6; font-size: 15px; }
-    .tally-row:last-child { border-bottom: none; }
-    .pill { font-weight: 700; }
-    .pill.approve { color: #1b6b2f; }
-    .pill.deny { color: #8b1a1a; }
-    .total { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #eef1f6; }
-    th { color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
-    .hidden { display: none; }
-    .cand-tally {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; padding: 10px 16px; border-bottom: 1px solid #eef1f6;
+    :root {
+      --navy: #0d1f3c;
+      --navy-700: #14294d;
+      --navy-500: #24406e;
+      --gold: #c8a951;
+      --gold-line: rgba(200, 169, 81, 0.38);
+      --gold-soft: rgba(200, 169, 81, 0.14);
+      --ink: #0d1f3c;
+      --muted: #5b6577;
+      --line: #e5e9f0;
+      --line-soft: #eef1f6;
+      --bg: #eceff4;
+      --card: #ffffff;
+      --approve: #16642a;
+      --deny: #92211d;
+      --r-sm: 8px;
+      --r-md: 12px;
+      --shadow: 0 1px 2px rgba(13, 31, 60, 0.06), 0 8px 24px rgba(13, 31, 60, 0.06);
+      --font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
     }
-    .cand-tally:last-child { border-bottom: none; }
-    .ct-name { font-size: 13px; font-weight: 600; color: #0d1f3c; }
-    .ct-district { font-size: 11px; color: #6b7280; margin-top: 1px; }
-    .ct-counts { display: flex; gap: 18px; flex-shrink: 0; font-size: 15px; font-weight: 700; }
-    .ct-counts .approve { color: #1b6b2f; min-width: 22px; text-align: right; }
-    .ct-counts .deny { color: #8b1a1a; min-width: 22px; text-align: right; }
-    .tally-hdr .legend { float: right; font-weight: 400; font-size: 11px; color: #c8a951; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { font-family: var(--font); background: var(--bg); min-height: 100vh; color: var(--ink); line-height: 1.45; -webkit-font-smoothing: antialiased; }
+
+    .skip-link { position: absolute; left: 12px; top: -48px; background: var(--gold); color: var(--navy); font-size: 13px; font-weight: 700; padding: 9px 14px; border-radius: var(--r-sm); z-index: 50; transition: top 0.15s ease; }
+    .skip-link:focus { top: 12px; outline: 3px solid #fff; outline-offset: 2px; }
+
+    .page-hdr {
+      background:
+        radial-gradient(120% 140% at 50% -40%, var(--navy-500) 0%, rgba(36,64,110,0) 55%),
+        linear-gradient(180deg, var(--navy-700) 0%, var(--navy) 100%);
+      border-bottom: 2px solid var(--gold);
+      padding: 18px 16px 15px; text-align: center;
+      box-shadow: 0 6px 20px rgba(13, 31, 60, 0.16);
+    }
+    .hdr-eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--gold); font-size: 10.5px; font-weight: 800; letter-spacing: 2.4px; text-transform: uppercase; }
+    .hdr-eyebrow::before, .hdr-eyebrow::after { content: ""; width: 16px; height: 1px; background: var(--gold-line); }
+    .hdr-org { color: #fff; font-size: 18px; font-weight: 800; margin-top: 7px; line-height: 1.2; }
+    .hdr-rule { width: 34px; height: 2px; background: var(--gold); border-radius: 2px; margin: 10px auto 9px; opacity: 0.85; }
+    .hdr-context { color: rgba(255, 255, 255, 0.72); font-size: 12.5px; font-weight: 500; }
+
+    .body { padding: 20px 15px 40px; max-width: 600px; margin: 0 auto; }
+    .total { text-align: center; font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 18px; }
+    .total strong { color: var(--ink); font-size: 15px; }
+
+    .state { text-align: center; color: var(--muted); font-size: 14px; padding: 40px 12px; }
+    .state.err { color: var(--deny); font-weight: 600; }
+
+    .slate { background: var(--card); border-radius: var(--r-md); border: 1px solid var(--line); box-shadow: var(--shadow); margin-bottom: 18px; overflow: hidden; }
+    .slate-hdr { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; background: var(--navy); color: #fff; padding: 13px 16px; }
+    .slate-hdr h2 { font-size: 14.5px; font-weight: 800; }
+    .slate-hdr .legend { color: var(--gold); font-size: 10.5px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; white-space: nowrap; }
+    .slate-list { padding: 2px 16px; }
+
+    .ct { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line-soft); }
+    .ct:last-child { border-bottom: none; }
+    .ct-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .ct-seat { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+    .chip { display: inline-block; font-size: 9.5px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: var(--navy-500); background: var(--gold-soft); border: 1px solid var(--gold-line); border-radius: 4px; padding: 1px 6px; }
+    .ct-counts { display: flex; gap: 10px; flex-shrink: 0; }
+    .tag { display: inline-flex; align-items: baseline; gap: 5px; font-size: 12px; font-weight: 700; padding: 5px 11px; border-radius: 999px; min-width: 62px; justify-content: center; }
+    .tag .n { font-size: 14px; }
+    .tag.approve { color: var(--approve); background: #e7f2ea; border: 1px solid #bfe0c8; }
+    .tag.deny { color: var(--deny); background: #fbe9e7; border: 1px solid #f2c9c4; }
+
+    .voters { background: var(--card); border-radius: var(--r-md); border: 1px solid var(--line); box-shadow: var(--shadow); overflow: hidden; margin-top: 4px; }
+    .voters .slate-hdr { border-radius: 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--line-soft); }
+    tr:last-child td { border-bottom: none; }
+    th { color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800; background: #fafbfc; }
+    td.time { color: var(--muted); white-space: nowrap; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
-  <div class="page-hdr">
-    <div class="hdr-badge">IAFF LOCAL 1463</div>
-    <div class="hdr-title">PAC Board Vote — Results</div>
-  </div>
-  <div class="body">
-    <div class="card" id="loginCard">
-      <label class="field-label" for="pass">Results Password</label>
-      <input type="password" id="pass" placeholder="Enter password" autocomplete="off">
-      <button class="btn" onclick="loadResults()">View Tally</button>
-      <div class="err" id="loginErr">Incorrect password.</div>
+<a class="skip-link" href="#results">Skip to results</a>
+
+<header class="page-hdr">
+  <div class="hdr-eyebrow">IAFF Local 1463</div>
+  <div class="hdr-org">Hawaii Fire Fighters Association</div>
+  <div class="hdr-rule"></div>
+  <div class="hdr-context">PAC Endorsement Board Vote Results</div>
+</header>
+
+<main class="body" id="results">
+  <div class="state" id="loadingState" aria-live="polite">Loading the live tally…</div>
+  <div class="state err hidden" id="errState" role="alert">Could not load results. Refresh to try again.</div>
+
+  <div id="resultsView" class="hidden">
+    <p class="total" id="totalLine"></p>
+    <div id="tallies"></div>
+    <div class="voters">
+      <div class="slate-hdr"><h2>Ballots Cast</h2><span class="legend">Name / Time</span></div>
+      <table>
+        <thead><tr><th>Name</th><th>Time</th></tr></thead>
+        <tbody id="voterRows"></tbody>
+      </table>
     </div>
-
-    <div id="resultsView" class="hidden">
-      <p class="total" id="totalLine"></p>
-      <div id="tallies"></div>
-      <div class="card">
-        <div class="tally-hdr" style="border-radius:8px 8px 0 0; margin:-16px -16px 12px;">Ballots Cast</div>
-        <table>
-          <thead><tr><th>Name</th><th>Time</th></tr></thead>
-          <tbody id="voterRows"></tbody>
-        </table>
-      </div>
-    </div>
   </div>
+</main>
 
-  <script>
-    let pass = "";
-    async function loadResults() {
-      pass = document.getElementById('pass').value;
-      const err = document.getElementById('loginErr');
-      err.classList.remove('show');
-      try {
-        const res = await fetch('/api/results', { headers: { 'x-results-pass': pass } });
-        if (res.status === 401) { err.classList.add('show'); return; }
-        if (!res.ok) throw new Error('failed');
-        const d = await res.json();
-        document.getElementById('loginCard').classList.add('hidden');
-        document.getElementById('resultsView').classList.remove('hidden');
-        document.getElementById('totalLine').textContent = d.total + ' ballot' + (d.total === 1 ? '' : 's') + ' cast';
+<script>
+  function esc(s) { return String(s).replace(/[&<>"']/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
-        // Per-candidate tallies, grouped by division in first-seen order.
-        const divisions = [];
-        (d.candidates || []).forEach(function(c) {
-          let g = divisions.find(function(x) { return x.name === c.division; });
-          if (!g) { g = { name: c.division, rows: [] }; divisions.push(g); }
-          g.rows.push(c);
-        });
-        document.getElementById('tallies').innerHTML = divisions.map(function(g) {
-          const rows = g.rows.map(function(c) {
-            return '<div class="cand-tally"><div>' +
-                '<div class="ct-name">' + esc(c.name) + '</div>' +
-                '<div class="ct-district">' + esc(c.district) + '</div>' +
-              '</div><div class="ct-counts">' +
-                '<span class="approve">' + c.Approve + '</span>' +
-                '<span class="deny">' + c.Deny + '</span>' +
-              '</div></div>';
-          }).join('');
-          return '<div class="card" style="padding:0; overflow:hidden;">' +
-              '<div class="tally-hdr">' + esc(g.name || 'Division') +
-                '<span class="legend">Approve&nbsp;&nbsp;/&nbsp;&nbsp;Deny</span></div>' +
-              rows + '</div>';
+  function chipFor(district) {
+    const parts = String(district).split(' · ');
+    return parts.length > 1 ? '<span class="chip">' + esc(parts.slice(1).join(' · ')) + '</span>' : '';
+  }
+  function seatFor(district) { return esc(String(district).split(' · ')[0]); }
+
+  async function loadResults() {
+    const loading = document.getElementById('loadingState');
+    const errEl = document.getElementById('errState');
+    try {
+      const res = await fetch('/api/results');
+      if (!res.ok) throw new Error('failed');
+      const d = await res.json();
+
+      loading.classList.add('hidden');
+      document.getElementById('resultsView').classList.remove('hidden');
+      document.getElementById('totalLine').innerHTML =
+        '<strong>' + d.total + '</strong> ballot' + (d.total === 1 ? '' : 's') + ' cast';
+
+      // Per-candidate tallies, grouped by division in first-seen order.
+      const divisions = [];
+      (d.candidates || []).forEach(function(c) {
+        let g = divisions.find(function(x) { return x.name === c.division; });
+        if (!g) { g = { name: c.division, rows: [] }; divisions.push(g); }
+        g.rows.push(c);
+      });
+      document.getElementById('tallies').innerHTML = divisions.map(function(g) {
+        const rows = g.rows.map(function(c) {
+          return '<div class="ct"><div>' +
+              '<div class="ct-name">' + esc(c.name) + '</div>' +
+              '<div class="ct-seat">' + seatFor(c.district) + chipFor(c.district) + '</div>' +
+            '</div><div class="ct-counts">' +
+              '<span class="tag approve">Approve <span class="n">' + c.Approve + '</span></span>' +
+              '<span class="tag deny">Deny <span class="n">' + c.Deny + '</span></span>' +
+            '</div></div>';
         }).join('');
+        return '<section class="slate"><div class="slate-hdr"><h2>' + esc(g.name || 'Division') +
+            '</h2><span class="legend">Approve / Deny</span></div>' +
+            '<div class="slate-list">' + rows + '</div></section>';
+      }).join('');
 
-        const voterRows = (d.voters || []).map(function(v) {
-          const t = new Date(v.ts).toLocaleString();
-          return '<tr><td>' + esc(v.name) + '</td><td>' + esc(t) + '</td></tr>';
-        }).join('');
-        document.getElementById('voterRows').innerHTML = voterRows;
-      } catch (e) {
-        err.textContent = 'Could not load results. Try again.';
-        err.classList.add('show');
-      }
+      const voterRows = (d.voters || []).map(function(v) {
+        const t = new Date(v.ts).toLocaleString();
+        return '<tr><td>' + esc(v.name) + '</td><td class="time">' + esc(t) + '</td></tr>';
+      }).join('');
+      document.getElementById('voterRows').innerHTML =
+        voterRows || '<tr><td colspan="2" style="color:#5b6577">No ballots cast yet.</td></tr>';
+    } catch (e) {
+      loading.classList.add('hidden');
+      errEl.classList.remove('hidden');
     }
-    function esc(s) { return String(s).replace(/[&<>"']/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-    document.getElementById('pass').addEventListener('keydown', function(e) { if (e.key === 'Enter') loadResults(); });
-  </script>
+  }
+  loadResults();
+</script>
 </body>
 </html>

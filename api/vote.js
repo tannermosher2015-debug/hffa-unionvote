@@ -3,7 +3,13 @@
 // under the `pac:` key prefix (same Upstash instance as mauifirepulse is fine).
 const crypto = require("crypto");
 
-const RL_LIMIT = 5; // max submissions per network (hashed IP) per window
+// Flood cap per network (hashed IP) per window. Set generously ON PURPOSE:
+// firefighters vote from shared station Wi-Fi, so many legitimate ballots arrive
+// from ONE public IP. A low cap silently locked out real voters (the 6th person
+// on a station got a 429). This still stops a runaway script hammering the
+// endpoint. ponytail: bump higher, or move to a per-member token, if a large
+// shared network ever legitimately exceeds it.
+const RL_LIMIT = 100; // max submissions per network (hashed IP) per window
 const RL_WINDOW = 3600; // seconds
 
 // Atomic increment-with-expiry: INCR the key and, only on first creation, set its
