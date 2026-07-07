@@ -1,17 +1,25 @@
-// Vercel serverless function — HFFA PAC Board vote results (password-gated).
-// Replaces the Netlify Forms dashboard: returns every vote plus running tallies.
-const redis = async (...args) => {
-  const res = await fetch(process.env.UPSTASH_REDIS_REST_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(args),
-  });
-  const data = await res.json();
-  return data.result;
-};
+// Vercel serverless function — HFFA PAC Board vote results (Neon Postgres).
+// Results are intentionally OPEN (no password): the tally and voter list are
+// viewable by anyone with the link. The page is noindex/nofollow so it is not
+// crawled, but it is not access-controlled. This was a deliberate choice.
+const { neon } = require("@neondatabase/serverless");
+
+const DB_URL =
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_URL_UNPOOLED ||
+  "";
+const sql = DB_URL ? neon(DB_URL) : null;
+
+async function ensureTable() {
+  await sql`CREATE TABLE IF NOT EXISTS ballots (
+    id BIGSERIAL PRIMARY KEY,
+    voter_name TEXT NOT NULL,
+    votes JSONB NOT NULL,
+    ip_hash TEXT,
+    ts TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
+}
 
 // Aggregate every ballot's per-candidate votes into one Approve/Deny tally per
 // candidate, preserving first-seen order within each division.
@@ -35,33 +43,18 @@ const tallyCandidates = (ballots) => {
 module.exports = async (req, res) => {
   if (req.method === "OPTIONS") return res.status(200).end();
 
-  if (
-    !process.env.UPSTASH_REDIS_REST_URL ||
-    !process.env.UPSTASH_REDIS_REST_TOKEN
-  ) {
+  if (!sql)
     return res.status(500).json({ error: "Storage not configured." });
-  }
-
-  // Results are intentionally OPEN (no password) — the tally and voter list are
-  // viewable by anyone with the link. The page is noindex/nofollow so it is not
-  // crawled, but it is not access-controlled. This was a deliberate choice.
 
   try {
-    const keys = await redis("KEYS", "pac:vote:*");
-    const ballots =
-      keys && keys.length
-        ? (await redis("MGET", ...keys))
-            .filter(Boolean)
-            .map((v) => {
-              try {
-                return JSON.parse(v);
-              } catch {
-                return null;
-              }
-            })
-            .filter(Boolean)
-            .sort((a, b) => (a.ts < b.ts ? 1 : -1))
-        : [];
+    await ensureTable();
+    const rows = await sql`
+      SELECT voter_name, votes, ts FROM ballots ORDER BY ts DESC`;
+    const ballots = rows.map((r) => ({
+      voterName: r.voter_name,
+      votes: r.votes || [],
+      ts: r.ts,
+    }));
 
     return res.status(200).json({
       total: ballots.length,

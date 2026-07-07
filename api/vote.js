@@ -1,40 +1,37 @@
-// Vercel serverless function — HFFA PAC Board vote submission.
-// Replaces the old Netlify Forms backend; votes are stored in Upstash Redis
-// under the `pac:` key prefix (same Upstash instance as mauifirepulse is fine).
+// Vercel serverless function — HFFA PAC Board vote submission (Neon Postgres).
+// Ballots are stored one row per submission in the `ballots` table.
 const crypto = require("crypto");
+const { neon } = require("@neondatabase/serverless");
 
 // Flood cap per network (hashed IP) per window. Set generously ON PURPOSE:
 // firefighters vote from shared station Wi-Fi, so many legitimate ballots arrive
-// from ONE public IP. A low cap silently locked out real voters (the 6th person
-// on a station got a 429). This still stops a runaway script hammering the
-// endpoint. ponytail: bump higher, or move to a per-member token, if a large
+// from ONE public IP. A low cap silently locked out real voters. This still stops
+// a runaway script. ponytail: raise, or move to a per-member token, if a large
 // shared network ever legitimately exceeds it.
-const RL_LIMIT = 100; // max submissions per network (hashed IP) per window
-const RL_WINDOW = 3600; // seconds
+const RL_LIMIT = 100;      // max ballots per network (hashed IP) per window
+const RL_WINDOW_MIN = 60;  // minutes
 
-// Atomic increment-with-expiry: INCR the key and, only on first creation, set its
-// TTL — all in one server-side script so a failed EXPIRE can't leave the counter
-// without expiry (which would block that network forever). Returns the new count.
-const RL_SCRIPT =
-  "local c = redis.call('INCR', KEYS[1]); if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end; return c";
-
-// Shared member access gate. Read ONLY from env — no hardcoded fallback. If the
-// env var is not set, voting is refused (fail-closed) rather than accepting votes
-// against a guessable default. Tanner sets VOTE_PASSWORD in the Vercel env vars.
+// Shared member access gate. Read ONLY from env — fail-closed if unset so we never
+// accept votes against a guessable default. Set VOTE_PASSWORD in the Vercel env.
 const VOTE_PASSWORD = process.env.VOTE_PASSWORD || "";
 
-const redis = async (...args) => {
-  const res = await fetch(process.env.UPSTASH_REDIS_REST_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(args),
-  });
-  const data = await res.json();
-  return data.result;
-};
+// Neon connection string is injected by the Vercel–Neon integration.
+const DB_URL =
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_URL_UNPOOLED ||
+  "";
+const sql = DB_URL ? neon(DB_URL) : null;
+
+async function ensureTable() {
+  await sql`CREATE TABLE IF NOT EXISTS ballots (
+    id BIGSERIAL PRIMARY KEY,
+    voter_name TEXT NOT NULL,
+    votes JSONB NOT NULL,
+    ip_hash TEXT,
+    ts TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
+}
 
 const clientIp = (req) => {
   const h = req.headers;
@@ -52,9 +49,7 @@ const VOTES = ["Approve", "Deny"];
 module.exports = async (req, res) => {
   if (req.method === "OPTIONS") return res.status(200).end();
 
-  // Member access gate. The form sends the password as a header both when
-  // unlocking (GET ?check=1) and on the actual vote submit. Fail-closed if the
-  // gate password was never configured — refuse rather than accept any vote.
+  // Member access gate. Fail-closed if the gate password was never configured.
   if (!VOTE_PASSWORD)
     return res.status(500).json({ error: "Voting is not configured yet." });
   const provided = req.headers["x-vote-pass"] || "";
@@ -68,14 +63,8 @@ module.exports = async (req, res) => {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
 
-  if (
-    !process.env.UPSTASH_REDIS_REST_URL ||
-    !process.env.UPSTASH_REDIS_REST_TOKEN
-  ) {
-    return res
-      .status(500)
-      .json({ error: "Storage not configured. Add Upstash env vars in Vercel." });
-  }
+  if (!sql)
+    return res.status(500).json({ error: "Storage not configured. Add a Neon database in Vercel." });
 
   let body = req.body;
   if (typeof body === "string") {
@@ -96,8 +85,8 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: "A valid name is required" });
   }
 
-  // One Approve/Deny per candidate. Bound the array so a single request can't
-  // be used to dump arbitrary data into storage.
+  // One Approve/Deny per candidate. Bound the array so a single request can't be
+  // used to dump arbitrary data into storage.
   const votes = Array.isArray(body.votes) ? body.votes : null;
   if (!votes || votes.length < 1 || votes.length > 100) {
     return res.status(400).json({ error: "A vote on every candidate is required" });
@@ -115,41 +104,31 @@ module.exports = async (req, res) => {
     }
   }
 
-  // Generous per-network flood cap. FAIL-CLOSED — if the limiter can't be checked
-  // (Redis error) we reject the vote rather than accept an unthrottled one.
-  // INCR + EXPIRE run in ONE atomic Lua script so a dropped EXPIRE can never leave a
-  // counter without a TTL (which would permanently block that network).
+  const clean = votes.map((v) => ({
+    division: v.division || "",
+    name: v.name,
+    district: v.district || "",
+    vote: v.vote,
+  }));
+  const h = ipHash(clientIp(req));
+
   try {
-    const rlKey = `pac:rl:${ipHash(clientIp(req))}`;
-    const count = await redis("EVAL", RL_SCRIPT, "1", rlKey, String(RL_WINDOW));
-    if (typeof count === "number" && count > RL_LIMIT) {
+    await ensureTable();
+
+    // Generous per-network flood cap. ponytail: count-then-insert has a tiny race
+    // under heavy concurrency; acceptable for a members-only ballot.
+    const rl = await sql`
+      SELECT count(*)::int AS n FROM ballots
+      WHERE ip_hash = ${h} AND ts > now() - make_interval(mins => ${RL_WINDOW_MIN})`;
+    if (rl[0] && rl[0].n >= RL_LIMIT) {
       return res.status(429).json({
         error: "Too many submissions from this network. Please try again later.",
       });
     }
-  } catch (e) {
-    console.error("Rate-limit check failed (rejecting vote):", e);
-    return res.status(503).json({ error: "Service temporarily unavailable. Please try again shortly." });
-  }
 
-  try {
-    const key = `pac:vote:${Date.now()}_${Math.random()
-      .toString(36)
-      .slice(2, 10)}`;
-    await redis(
-      "SET",
-      key,
-      JSON.stringify({
-        voterName,
-        votes: votes.map((v) => ({
-          division: v.division || "",
-          name: v.name,
-          district: v.district || "",
-          vote: v.vote,
-        })),
-        ts: new Date().toISOString(),
-      }),
-    );
+    await sql`
+      INSERT INTO ballots (voter_name, votes, ip_hash)
+      VALUES (${voterName}, ${JSON.stringify(clean)}::jsonb, ${h})`;
     return res.status(200).json({ success: true });
   } catch (err) {
     console.error("Vote submit error:", err);
