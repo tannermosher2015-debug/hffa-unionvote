@@ -297,6 +297,11 @@
         <h2 class="slate-hdr" id="kauaiHdr">Kauai County<span>Vote on each candidate</span></h2>
         <div class="slate-list" id="kauaiList"></div>
       </section>
+
+      <section class="slate-card">
+        <h2 class="slate-hdr" id="oahuHdr">Oahu Division<span>Vote on each candidate</span></h2>
+        <div class="slate-list" id="oahuList"></div>
+      </section>
     </form>
   </main>
 
@@ -348,7 +353,21 @@ const KAUAI = [
   { name: 'Todd Ozaki', district: 'Kauai County Council · NP' },
   { name: 'Dane Smith', district: 'Kauai County Council · NP' },
 ];
-const TOTAL = MAUI.length + BI.length + KAUAI.length;
+const OAHU = [
+  { name: 'Carol A. Fukunaga', district: 'Senate Dist. 11 · D' },
+  { name: 'Glenn S. Wakai', district: 'Senate Dist. 15 · D' },
+  { name: 'Gerald M. Gabbard', district: 'Senate Dist. 21 · D' },
+  { name: 'Andrew Takuya Garrett', district: 'House Dist. 22 · D' },
+  { name: 'Kim Coco Iwamoto', district: 'House Dist. 25 · D' },
+  { name: 'Jenna Takenouchi', district: 'House Dist. 27 · D' },
+  { name: 'Samuel Satoru Kong', district: 'House Dist. 33 · D' },
+  { name: 'Cory M.C.W. Chun', district: 'House Dist. 35 · D' },
+  { name: 'Lauren K. Matsumoto', district: 'House Dist. 38 · R' },
+  { name: 'Lisa C. Kitagawa-Akagi', district: 'House Dist. 48 · D' },
+  { name: 'Matthew B. Weyer', district: 'Honolulu Council Dist. II · NP' },
+  { name: 'Valerie A. Okimoto', district: 'Honolulu Council Dist. VIII · NP' },
+];
+const TOTAL = MAUI.length + BI.length + KAUAI.length + OAHU.length;
 
 function esc(s) {
   return String(s).replace(/[&<>"']/g, function(c) {
@@ -374,6 +393,7 @@ function renderRoster() {
   document.getElementById('mauiList').innerHTML = MAUI.map(function(c, i) { return rowHtml('m', i, c); }).join('');
   document.getElementById('biList').innerHTML = BI.map(function(c, i) { return rowHtml('b', i, c); }).join('');
   document.getElementById('kauaiList').innerHTML = KAUAI.map(function(c, i) { return rowHtml('k', i, c); }).join('');
+  document.getElementById('oahuList').innerHTML = OAHU.map(function(c, i) { return rowHtml('o', i, c); }).join('');
   updateProgress();
 }
 
@@ -441,6 +461,7 @@ async function submitVote() {
   collect('m', MAUI, 'Maui');
   collect('b', BI, 'Hawaii Island');
   collect('k', KAUAI, 'Kauai County');
+  collect('o', OAHU, 'Oahu');
 
   if (firstMissing) {
     if (missingCount) {
