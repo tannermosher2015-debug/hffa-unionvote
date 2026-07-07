@@ -1,5 +1,9 @@
 // Vercel serverless function — HFFA PAC Board vote submission (Neon Postgres).
-// Ballots are stored one row per submission in the `ballots` table.
+// SECRET BALLOT: WHO voted and HOW they voted are stored in two separate tables
+// with NO column linking them:
+//   voters  — voter_name + ip_hash + ts   (turnout: confirms everyone voted)
+//   choices — votes jsonb                  (anonymous ballot: no name, no time)
+// Nothing in the app, the API, or the schema ties a name to a set of choices.
 const crypto = require("crypto");
 const { neon } = require("@neondatabase/serverless");
 
@@ -11,11 +15,8 @@ const { neon } = require("@neondatabase/serverless");
 const RL_LIMIT = 100;      // max ballots per network (hashed IP) per window
 const RL_WINDOW_MIN = 60;  // minutes
 
-// Shared member access gate. Read ONLY from env — fail-closed if unset so we never
-// accept votes against a guessable default. Set VOTE_PASSWORD in the Vercel env.
 const VOTE_PASSWORD = process.env.VOTE_PASSWORD || "";
 
-// Neon connection string is injected by the Vercel–Neon integration.
 const DB_URL =
   process.env.DATABASE_URL ||
   process.env.POSTGRES_URL ||
@@ -23,14 +24,21 @@ const DB_URL =
   "";
 const sql = DB_URL ? neon(DB_URL) : null;
 
-async function ensureTable() {
-  await sql`CREATE TABLE IF NOT EXISTS ballots (
+async function ensureSchema() {
+  await sql`CREATE TABLE IF NOT EXISTS voters (
     id BIGSERIAL PRIMARY KEY,
     voter_name TEXT NOT NULL,
-    votes JSONB NOT NULL,
     ip_hash TEXT,
     ts TIMESTAMPTZ NOT NULL DEFAULT now()
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS choices (
+    id BIGSERIAL PRIMARY KEY,
+    votes JSONB NOT NULL
+  )`;
+  // One-time cleanup: the old `ballots` table stored voter_name + votes in the same
+  // row (pre-secret-ballot). Nothing writes to it now, so DROP IF EXISTS is a safe
+  // no-op after the first request and removes the last name↔vote linkage.
+  await sql`DROP TABLE IF EXISTS ballots`;
 }
 
 const clientIp = (req) => {
@@ -49,14 +57,12 @@ const VOTES = ["Approve", "Deny"];
 module.exports = async (req, res) => {
   if (req.method === "OPTIONS") return res.status(200).end();
 
-  // Member access gate. Fail-closed if the gate password was never configured.
   if (!VOTE_PASSWORD)
     return res.status(500).json({ error: "Voting is not configured yet." });
   const provided = req.headers["x-vote-pass"] || "";
   if (provided !== VOTE_PASSWORD)
     return res.status(401).json({ error: "Incorrect access password." });
 
-  // Lightweight unlock check for the gate screen — no vote payload to store.
   if (req.query && req.query.check)
     return res.status(200).json({ ok: true });
 
@@ -85,8 +91,6 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: "A valid name is required" });
   }
 
-  // One Approve/Deny per candidate. Bound the array so a single request can't be
-  // used to dump arbitrary data into storage.
   const votes = Array.isArray(body.votes) ? body.votes : null;
   if (!votes || votes.length < 1 || votes.length > 100) {
     return res.status(400).json({ error: "A vote on every candidate is required" });
@@ -113,12 +117,11 @@ module.exports = async (req, res) => {
   const h = ipHash(clientIp(req));
 
   try {
-    await ensureTable();
+    await ensureSchema();
 
-    // Generous per-network flood cap. ponytail: count-then-insert has a tiny race
-    // under heavy concurrency; acceptable for a members-only ballot.
+    // Generous per-network flood cap (turnout table carries the ip_hash).
     const rl = await sql`
-      SELECT count(*)::int AS n FROM ballots
+      SELECT count(*)::int AS n FROM voters
       WHERE ip_hash = ${h} AND ts > now() - make_interval(mins => ${RL_WINDOW_MIN})`;
     if (rl[0] && rl[0].n >= RL_LIMIT) {
       return res.status(429).json({
@@ -126,9 +129,13 @@ module.exports = async (req, res) => {
       });
     }
 
-    await sql`
-      INSERT INTO ballots (voter_name, votes, ip_hash)
-      VALUES (${voterName}, ${JSON.stringify(clean)}::jsonb, ${h})`;
+    // Record turnout and the anonymous ballot atomically (both-or-neither, so the
+    // turnout list and the tally can't drift). The two rows share no key, name, or
+    // timestamp — the choices row carries only the votes.
+    await sql.transaction([
+      sql`INSERT INTO voters (voter_name, ip_hash) VALUES (${voterName}, ${h})`,
+      sql`INSERT INTO choices (votes) VALUES (${JSON.stringify(clean)}::jsonb)`,
+    ]);
     return res.status(200).json({ success: true });
   } catch (err) {
     console.error("Vote submit error:", err);

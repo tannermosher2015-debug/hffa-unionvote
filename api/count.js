@@ -11,13 +11,10 @@ const DB_URL =
   "";
 const sql = DB_URL ? neon(DB_URL) : null;
 
-async function ensureTable() {
-  await sql`CREATE TABLE IF NOT EXISTS ballots (
+async function ensureSchema() {
+  await sql`CREATE TABLE IF NOT EXISTS choices (
     id BIGSERIAL PRIMARY KEY,
-    voter_name TEXT NOT NULL,
-    votes JSONB NOT NULL,
-    ip_hash TEXT,
-    ts TIMESTAMPTZ NOT NULL DEFAULT now()
+    votes JSONB NOT NULL
   )`;
 }
 
@@ -35,8 +32,8 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: "Storage not configured." });
 
   try {
-    await ensureTable();
-    const r = await sql`SELECT count(*)::int AS n FROM ballots`;
+    await ensureSchema();
+    const r = await sql`SELECT count(*)::int AS n FROM choices`;
     return res.status(200).json({ count: r[0] ? r[0].n : 0 });
   } catch (err) {
     console.error("Count error:", err);
