@@ -256,6 +256,7 @@
       margin-bottom: 22px; box-shadow: 0 8px 24px rgba(22, 100, 42, 0.3);
     }
     .check svg { width: 32px; height: 32px; }
+    .check.closed { background: var(--navy-500); box-shadow: 0 8px 24px rgba(13, 31, 60, 0.3); }
     .success-title { font-size: 23px; font-weight: 800; letter-spacing: 0.2px; margin-bottom: 8px; }
     .success-sub { font-size: 14px; color: var(--muted); line-height: 1.55; max-width: 300px; }
     .success-count {
@@ -313,6 +314,17 @@
   <p class="success-sub">Your vote has been recorded. The PAC chair can view the running tally on the results page.</p>
   <div class="success-count" id="successCount"></div>
   <button class="btn-again" onclick="location.reload()">Submit Another Vote</button>
+</div>
+
+<!-- Voting closed -->
+<div class="success" id="closedScreen" role="status">
+  <div class="check closed">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </svg>
+  </div>
+  <h1 class="success-title">Voting Has Closed</h1>
+  <p class="success-sub">The deadline to submit a ballot was 10:00 AM HST on Thursday, July 9. No further votes can be accepted.</p>
 </div>
 
 <!-- Main ballot -->
@@ -453,6 +465,18 @@ const OAHU = [
 ];
 const TOTAL = MAUI.length + BI.length + KAUAI.length + OAHU.length;
 
+// Voting deadline: 10:00 AM HST, Thursday, July 9, 2026 (HST = UTC-10, no DST).
+// Also enforced server-side in api/vote.js — keep the two in sync.
+const DEADLINE_MS = Date.UTC(2026, 6, 9, 20, 0, 0);
+function votingClosed() { return Date.now() >= DEADLINE_MS; }
+function showClosed() {
+  document.getElementById('gateScreen').style.display = 'none';
+  document.getElementById('mainForm').style.display = 'none';
+  document.getElementById('successScreen').classList.remove('show');
+  document.getElementById('closedScreen').classList.add('show');
+  window.scrollTo(0, 0);
+}
+
 function esc(s) {
   return String(s).replace(/[&<>"']/g, function(c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -522,6 +546,7 @@ async function fetchCount() {
 }
 
 async function submitVote() {
+  if (votingClosed()) return showClosed();
   const errorMsg = document.getElementById('errorMsg');
   const nameVal  = document.getElementById('voterName').value.trim();
   errorMsg.classList.remove('show');
@@ -573,6 +598,7 @@ async function submitVote() {
       headers: { 'Content-Type': 'application/json', 'x-vote-pass': votePass },
       body: JSON.stringify({ voterName: nameVal, votes: votes, botField: botField }),
     });
+    if (res.status === 403) return showClosed();
     if (!res.ok) throw new Error('Submission rejected');
     document.getElementById('mainForm').style.display = 'none';
     document.getElementById('successScreen').classList.add('show');
@@ -586,6 +612,7 @@ async function submitVote() {
 // Access gate
 let votePass = "";
 async function checkGate() {
+  if (votingClosed()) return showClosed();
   votePass = document.getElementById('gatePass').value;
   const err = document.getElementById('gateErr');
   err.classList.remove('show');
@@ -606,6 +633,7 @@ async function checkGate() {
 document.getElementById('gatePass').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') checkGate();
 });
+if (votingClosed()) showClosed();
 </script>
 </body>
 </html>
