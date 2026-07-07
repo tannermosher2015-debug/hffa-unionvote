@@ -30,6 +30,18 @@
     }
     .hdr-title { color: #fff; font-size: 20px; font-weight: 700; }
     .hdr-sub   { color: #c8a951; font-size: 12px; margin-top: 4px; }
+    .hdr-count {
+      display: inline-block;
+      background: rgba(200, 169, 81, 0.15);
+      color: #c8a951;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(200, 169, 81, 0.35);
+      margin-top: 10px;
+    }
 
     .body { padding: 16px 14px 110px; max-width: 560px; margin: 0 auto; }
 
@@ -193,6 +205,16 @@
     .check-circle svg { width: 30px; height: 30px; }
     .success-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
     .success-sub   { font-size: 14px; color: #6b7280; line-height: 1.5; max-width: 280px; }
+    .success-count {
+      margin-top: 16px;
+      background: #eaf4ec;
+      color: #1b6b2f;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 20px;
+      border-radius: 20px;
+      border: 1px solid #c3e6cb;
+    }
     .btn-again {
       margin-top: 24px;
       padding: 11px 24px;
@@ -236,6 +258,7 @@
   </div>
   <div class="success-title">Vote Submitted</div>
   <p class="success-sub">Your vote has been recorded. The PAC chair can view the running tally on the results page.</p>
+  <div class="success-count" id="successCount"></div>
   <button class="btn-again" onclick="location.reload()">Submit Another Vote</button>
 </div>
 
@@ -245,6 +268,7 @@
     <div class="hdr-badge">IAFF LOCAL 1463</div>
     <div class="hdr-title">PAC Endorsement Board Vote</div>
     <div class="hdr-sub">Approve or deny each candidate</div>
+    <div class="hdr-count" id="ballotCount" style="display:none"></div>
   </header>
 
   <main class="body">
@@ -267,6 +291,11 @@
       <section class="slate-card">
         <h2 class="slate-hdr" id="biHdr">Hawaii Island Division<span>Vote on each candidate</span></h2>
         <div class="slate-list" id="biList"></div>
+      </section>
+
+      <section class="slate-card">
+        <h2 class="slate-hdr" id="kauaiHdr">Kauai County<span>Vote on each candidate</span></h2>
+        <div class="slate-list" id="kauaiList"></div>
       </section>
     </form>
   </main>
@@ -311,7 +340,15 @@ const BI = [
   { name: 'Holeka Inaba', district: 'Council Dist. 8' },
   { name: 'James Hustace', district: 'Council Dist. 9' },
 ];
-const TOTAL = MAUI.length + BI.length;
+const KAUAI = [
+  { name: 'Paul Applegate', district: 'Kauai County Council · NP' },
+  { name: 'Michelle Correa', district: 'Kauai County Council · NP' },
+  { name: 'Billy DeCosta', district: 'Kauai County Council · NP' },
+  { name: 'Fern Holland', district: 'Kauai County Council · NP' },
+  { name: 'Todd Ozaki', district: 'Kauai County Council · NP' },
+  { name: 'Dane Smith', district: 'Kauai County Council · NP' },
+];
+const TOTAL = MAUI.length + BI.length + KAUAI.length;
 
 function esc(s) {
   return String(s).replace(/[&<>"']/g, function(c) {
@@ -336,6 +373,7 @@ function rowHtml(prefix, i, c) {
 function renderRoster() {
   document.getElementById('mauiList').innerHTML = MAUI.map(function(c, i) { return rowHtml('m', i, c); }).join('');
   document.getElementById('biList').innerHTML = BI.map(function(c, i) { return rowHtml('b', i, c); }).join('');
+  document.getElementById('kauaiList').innerHTML = KAUAI.map(function(c, i) { return rowHtml('k', i, c); }).join('');
   updateProgress();
 }
 
@@ -356,6 +394,21 @@ document.addEventListener('change', function(e) {
 function getVote(prefix, i) {
   const el = document.querySelector('input[name="' + prefix + i + '"]:checked');
   return el ? el.value : null;
+}
+
+// Fetch and display the live ballot count (member-visible, no per-candidate breakdown)
+async function fetchCount() {
+  try {
+    const res = await fetch('/api/count', { headers: { 'x-vote-pass': votePass } });
+    if (!res.ok) return;
+    const d = await res.json();
+    const n = typeof d.count === 'number' ? d.count : 0;
+    const label = n + ' ballot' + (n === 1 ? '' : 's') + ' cast';
+    const el = document.getElementById('ballotCount');
+    if (el) { el.textContent = label; el.style.display = ''; }
+    const sc = document.getElementById('successCount');
+    if (sc) sc.textContent = label;
+  } catch (e) { /* silent fail — counter is non-critical */ }
 }
 
 async function submitVote() {
@@ -387,6 +440,7 @@ async function submitVote() {
   }
   collect('m', MAUI, 'Maui');
   collect('b', BI, 'Hawaii Island');
+  collect('k', KAUAI, 'Kauai County');
 
   if (firstMissing) {
     if (missingCount) {
@@ -411,6 +465,7 @@ async function submitVote() {
     document.getElementById('mainForm').style.display = 'none';
     document.getElementById('successScreen').classList.add('show');
     window.scrollTo(0, 0);
+    fetchCount(); // refresh count on success screen
   } catch (e) {
     alert('Submission failed. Check your connection and try again.');
   }
@@ -429,6 +484,7 @@ async function checkGate() {
     document.getElementById('gateScreen').style.display = 'none';
     document.getElementById('mainForm').style.display = '';
     renderRoster();
+    fetchCount(); // show live ballot count after login
     document.getElementById('voterName').focus();
   } catch (e) {
     err.textContent = 'Could not verify. Check your connection and try again.';
