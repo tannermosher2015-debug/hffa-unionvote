@@ -325,22 +325,22 @@
       </div>
 
       <section class="slate" aria-labelledby="mauiHdr">
-        <div class="slate-hdr"><h2 id="mauiHdr">Maui Division</h2><span class="slate-note">Approve / Deny each</span></div>
+        <div class="slate-hdr"><h2 id="mauiHdr">Maui Division</h2><span class="slate-note">Yes / No each</span></div>
         <div class="slate-list" id="mauiList"></div>
       </section>
 
       <section class="slate" aria-labelledby="biHdr">
-        <div class="slate-hdr"><h2 id="biHdr">Hawaii Island Division</h2><span class="slate-note">Approve / Deny each</span></div>
+        <div class="slate-hdr"><h2 id="biHdr">Hawaii Island Division</h2><span class="slate-note">Yes / No each</span></div>
         <div class="slate-list" id="biList"></div>
       </section>
 
       <section class="slate" aria-labelledby="kauaiHdr">
-        <div class="slate-hdr"><h2 id="kauaiHdr">Kauai County</h2><span class="slate-note">Approve / Deny each</span></div>
+        <div class="slate-hdr"><h2 id="kauaiHdr">Kauai County</h2><span class="slate-note">Yes / No each</span></div>
         <div class="slate-list" id="kauaiList"></div>
       </section>
 
       <section class="slate" aria-labelledby="oahuHdr">
-        <div class="slate-hdr"><h2 id="oahuHdr">Oahu Division</h2><span class="slate-note">Approve / Deny each</span></div>
+        <div class="slate-hdr"><h2 id="oahuHdr">Oahu Division</h2><span class="slate-note">Yes / No each</span></div>
         <div class="slate-list" id="oahuList"></div>
       </section>
     </form>
@@ -429,8 +429,8 @@ function rowHtml(prefix, i, c) {
         '<div class="cand-seat">' + seat + chip + '</div>' +
       '</div>' +
       '<div class="seg" role="radiogroup" aria-label="Vote on ' + esc(c.name) + '">' +
-        '<label class="seg-opt approve"><input type="radio" name="' + nm + '" value="Approve"><span>Approve</span></label>' +
-        '<label class="seg-opt deny"><input type="radio" name="' + nm + '" value="Deny"><span>Deny</span></label>' +
+        '<label class="seg-opt approve"><input type="radio" name="' + nm + '" value="Approve"><span>Yes</span></label>' +
+        '<label class="seg-opt deny"><input type="radio" name="' + nm + '" value="Deny"><span>No</span></label>' +
       '</div>' +
     '</div>';
 }
