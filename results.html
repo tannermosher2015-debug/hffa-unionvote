@@ -144,12 +144,12 @@
               '<div class="ct-name">' + esc(c.name) + '</div>' +
               '<div class="ct-seat">' + seatFor(c.district) + chipFor(c.district) + '</div>' +
             '</div><div class="ct-counts">' +
-              '<span class="tag approve">Approve <span class="n">' + c.Approve + '</span></span>' +
-              '<span class="tag deny">Deny <span class="n">' + c.Deny + '</span></span>' +
+              '<span class="tag approve">Yes <span class="n">' + c.Approve + '</span></span>' +
+              '<span class="tag deny">No <span class="n">' + c.Deny + '</span></span>' +
             '</div></div>';
         }).join('');
         return '<section class="slate"><div class="slate-hdr"><h2>' + esc(g.name || 'Division') +
-            '</h2><span class="legend">Approve / Deny</span></div>' +
+            '</h2><span class="legend">Yes / No</span></div>' +
             '<div class="slate-list">' + rows + '</div></section>';
       }).join('');
 
