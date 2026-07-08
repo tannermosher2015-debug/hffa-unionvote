@@ -103,6 +103,9 @@
     .intro { text-align: center; margin: 4px 0 18px; }
     .intro-title { font-size: 15px; font-weight: 700; color: var(--ink); }
     .intro-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .link { color: var(--navy); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+    .link:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; border-radius: 2px; }
+    .results-link { text-align: center; margin-top: 18px; font-size: 13.5px; }
 
     /* Name / access card */
     .panel {
@@ -300,6 +303,7 @@
       <button class="btn btn-block" onclick="checkGate()">Enter</button>
       <div class="error-msg" id="gateErr" role="alert" style="margin-top:12px">Incorrect password.</div>
     </div>
+    <p class="results-link"><a class="link" href="/results.html">View the live results page &rarr;</a></p>
   </main>
 </div>
 
@@ -311,7 +315,7 @@
     </svg>
   </div>
   <h1 class="success-title">Vote Submitted</h1>
-  <p class="success-sub">Your vote has been recorded. The PAC chair can view the running tally on the results page.</p>
+  <p class="success-sub">Your vote has been recorded. The board can view the running tally on the <a class="link" href="/results.html">results page</a>.</p>
   <div class="success-count" id="successCount"></div>
   <button class="btn-again" onclick="location.reload()">Submit Another Vote</button>
 </div>
