@@ -99,6 +99,16 @@
     .btn-sm:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
     .verr { color: var(--deny); font-weight: 600; font-size: 13px; margin-top: 10px; }
 
+    /* Final result banner / live-status line */
+    .status-open { text-align: center; font-size: 12.5px; color: var(--muted); font-weight: 600; margin-bottom: 16px; }
+    .verdict { text-align: center; border-radius: var(--r-md); padding: 20px 16px; margin-bottom: 18px; border: 1px solid; }
+    .verdict.ratified { background: #e7f2ea; border-color: #bfe0c8; }
+    .verdict.failed { background: #fbe9e7; border-color: #f2c9c4; }
+    .verdict-tag { display: block; font-size: 26px; font-weight: 800; letter-spacing: 0.5px; }
+    .verdict.ratified .verdict-tag { color: var(--approve); }
+    .verdict.failed .verdict-tag { color: var(--deny); }
+    .verdict-sub { display: block; font-size: 13px; color: var(--muted); margin-top: 6px; }
+
     .voters { background: var(--card); border-radius: var(--r-md); border: 1px solid var(--line); box-shadow: var(--shadow); overflow: hidden; margin-top: 4px; }
     .voters .slate-hdr { border-radius: 0; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -124,6 +134,7 @@
   <div class="state err hidden" id="errState" role="alert">Could not load results. Refresh to try again.</div>
 
   <div id="resultsView" class="hidden">
+    <div id="voteStatus"></div>
     <p class="total" id="totalLine"></p>
     <div id="tallies"></div>
     <div class="voters">
@@ -153,6 +164,26 @@
   }
   function seatFor(district) { return esc(String(district).split(' · ')[0]); }
 
+  // Voting deadline: 12:00 PM (noon) HST, Thursday, July 16, 2026 (mirror of index.html + api/vote.js).
+  var DEADLINE_MS = Date.UTC(2026, 6, 16, 22, 0, 0);
+
+  // Before the deadline: a small "voting open" note. After: a RATIFIED / NOT RATIFIED banner.
+  function renderVerdict(d) {
+    const el = document.getElementById('voteStatus');
+    const c = (d.candidates || [])[0];
+    const yes = c ? (c.Approve || 0) : 0;
+    const no = c ? (c.Deny || 0) : 0;
+    if (Date.now() < DEADLINE_MS) {
+      el.innerHTML = '<p class="status-open">Live count. Voting is open until 12:00 PM HST, Thursday, July 16.</p>';
+      return;
+    }
+    const ratified = yes > no; // ratification needs a majority of votes cast; a tie does not pass
+    el.innerHTML = '<div class="verdict ' + (ratified ? 'ratified' : 'failed') + '">' +
+        '<span class="verdict-tag">' + (ratified ? 'RATIFIED' : 'NOT RATIFIED') + '</span>' +
+        '<span class="verdict-sub">Voting has closed. Final result: ' + yes + ' Yes to ' + no + ' No.</span>' +
+      '</div>';
+  }
+
   async function loadResults() {
     const loading = document.getElementById('loadingState');
     const errEl = document.getElementById('errState');
@@ -181,6 +212,8 @@
               '<div class="rbar" role="img" aria-label="' + yp + ' percent Yes"><span style="width:' + yp + '%"></span></div>' +
             '</div></section>';
       }).join('');
+
+      renderVerdict(d);
 
       // Turnout names are NOT in the public response; they load via loadVoters() with the password.
     } catch (e) {

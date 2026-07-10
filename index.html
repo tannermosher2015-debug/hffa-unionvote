@@ -236,6 +236,30 @@
     .btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
     .btn-block { margin-top: 14px; }
 
+    /* ---- Confirm dialog ---- */
+    .confirm-overlay {
+      display: none; position: fixed; inset: 0; z-index: 40;
+      background: rgba(13, 31, 60, 0.55);
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .confirm-overlay.show { display: flex; }
+    .confirm-card {
+      background: var(--card); border-radius: var(--r-lg); padding: 26px 22px;
+      max-width: 380px; width: 100%; text-align: center;
+      box-shadow: 0 20px 60px rgba(13, 31, 60, 0.35);
+    }
+    .confirm-title { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+    .confirm-lead { font-size: 13.5px; color: var(--muted); margin-bottom: 16px; }
+    .confirm-badge {
+      font-size: 18px; font-weight: 800; letter-spacing: 0.4px;
+      padding: 12px; border-radius: var(--r-sm); margin-bottom: 16px;
+    }
+    .confirm-badge.approve { color: var(--approve); background: var(--approve-bg); border: 1px solid var(--approve-line); }
+    .confirm-badge.deny { color: var(--deny); background: var(--deny-bg); border: 1px solid var(--deny-line); }
+    .confirm-fine { font-size: 12.5px; color: var(--muted); margin-bottom: 20px; }
+    .confirm-card .btn { margin-bottom: 10px; }
+    .confirm-card .btn-again { margin-top: 0; }
+
     /* ---- Success ---- */
     .success {
       display: none; flex-direction: column; align-items: center; justify-content: center;
@@ -384,6 +408,17 @@
       <button class="btn" onclick="submitVote()">Submit My Vote</button>
     </div>
   </div>
+
+  <div class="confirm-overlay" id="confirmOverlay" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="confirm-card">
+      <h2 class="confirm-title" id="confirmTitle">Confirm your vote</h2>
+      <p class="confirm-lead">You are casting a final vote on ratifying the 2026-2029 CBA:</p>
+      <div class="confirm-badge" id="confirmChoice"></div>
+      <p class="confirm-fine">Once you submit, your vote is recorded and cannot be changed.</p>
+      <button class="btn" id="confirmSubmit" onclick="sendVote()">Confirm and Submit</button>
+      <button class="btn-again" onclick="cancelConfirm()">Go Back</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -432,7 +467,10 @@ async function fetchCount() {
   } catch (e) { /* silent fail: counter is non-critical */ }
 }
 
-async function submitVote() {
+let pendingChoice = null;
+
+// Validate, then open the confirmation dialog. The actual POST happens in sendVote().
+function submitVote() {
   if (votingClosed()) return showClosed();
   const errorMsg = document.getElementById('errorMsg');
   const nameEl = document.getElementById('voterName');
@@ -459,8 +497,29 @@ async function submitVote() {
     return;
   }
 
-  const votes = [{ division: 'Ratification', name: PROPOSITION, district: '', vote: choice }];
+  pendingChoice = choice;
+  const badge = document.getElementById('confirmChoice');
+  badge.textContent = choice === 'Approve' ? 'YES, RATIFY' : 'NO, DO NOT RATIFY';
+  badge.className = 'confirm-badge ' + (choice === 'Approve' ? 'approve' : 'deny');
+  document.getElementById('confirmOverlay').classList.add('show');
+  document.getElementById('confirmSubmit').focus();
+}
+
+function cancelConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  pendingChoice = null;
+  const btn = document.querySelector('.submit-bar .btn');
+  if (btn) btn.focus();
+}
+
+// Final submission, only after the member confirms in the dialog.
+async function sendVote() {
+  if (votingClosed()) return showClosed();
+  if (!pendingChoice) return;
+  const nameVal = document.getElementById('voterName').value.trim();
+  const votes = [{ division: 'Ratification', name: PROPOSITION, district: '', vote: pendingChoice }];
   const botField = document.querySelector('input[name="bot-field"]').value;
+  document.getElementById('confirmOverlay').classList.remove('show');
   try {
     const res = await fetch('/api/vote', {
       method: 'POST',
@@ -477,6 +536,14 @@ async function submitVote() {
     alert('Submission failed. Check your connection and try again.');
   }
 }
+
+// Dismiss the confirmation dialog with Escape or a backdrop click.
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('confirmOverlay').classList.contains('show')) cancelConfirm();
+});
+document.getElementById('confirmOverlay').addEventListener('click', function(e) {
+  if (e.target === this) cancelConfirm();
+});
 
 // Access gate
 let votePass = "";
