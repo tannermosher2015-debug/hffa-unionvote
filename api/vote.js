@@ -17,9 +17,9 @@ const RL_WINDOW_MIN = 60;  // minutes
 
 const VOTE_PASSWORD = process.env.VOTE_PASSWORD || "";
 
-// Voting deadline: 10:00 AM HST, Thursday, July 9, 2026 (HST = UTC-10, no DST).
-// Also shown/enforced client-side in index.html — keep the two in sync.
-const DEADLINE_MS = Date.UTC(2026, 6, 9, 20, 0, 0);
+// Voting deadline: 12:00 PM (noon) HST, Thursday, July 16, 2026 (HST = UTC-10, no DST).
+// Also shown/enforced client-side in index.html; keep the two in sync.
+const DEADLINE_MS = Date.UTC(2026, 6, 16, 22, 0, 0);
 
 const DB_URL =
   process.env.DATABASE_URL ||
@@ -74,7 +74,7 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: "Method not allowed" });
 
   if (Date.now() >= DEADLINE_MS)
-    return res.status(403).json({ error: "Voting closed at 10:00 AM HST on Thursday, July 9." });
+    return res.status(403).json({ error: "Voting closed at 12:00 PM HST on Thursday, July 16." });
 
   if (!sql)
     return res.status(500).json({ error: "Storage not configured. Add a Neon database in Vercel." });

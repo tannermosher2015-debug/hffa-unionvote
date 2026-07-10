@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#0d1f3c">
-  <title>IAFF Local 1463 - PAC Endorsement Board Vote</title>
+  <title>IAFF Local 1463 - 2026-2029 CBA Ratification Vote</title>
   <style>
     :root {
       --navy: #0d1f3c;
@@ -127,7 +127,7 @@
     .input::placeholder { color: #9aa3b2; }
     .input:focus { border-color: var(--navy-500); box-shadow: 0 0 0 3px rgba(36, 64, 110, 0.14); }
 
-    /* ---- Division card ---- */
+    /* ---- Slate / proposition card ---- */
     .slate {
       background: var(--card); border-radius: var(--r-md);
       border: 1px solid var(--line); box-shadow: var(--shadow);
@@ -143,31 +143,21 @@
       color: var(--gold); font-size: 10.5px; font-weight: 600;
       letter-spacing: 0.4px; text-transform: uppercase; white-space: nowrap;
     }
-    .slate-list { padding: 2px 16px; }
 
-    /* Candidate row */
-    .cand {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line-soft);
+    /* Proposition body */
+    .prop-body { padding: 18px 16px; }
+    .prop-lead { font-size: 13.5px; color: var(--muted); margin-bottom: 4px; }
+    .prop-terms { list-style: none; margin: 14px 0 18px; padding: 0; border-top: 1px solid var(--line-soft); }
+    .prop-terms li {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+      padding: 12px 0; border-bottom: 1px solid var(--line-soft);
     }
-    .cand:last-child { border-bottom: none; }
-    .cand-info { min-width: 0; }
-    .cand-name { font-size: 14.5px; font-weight: 700; color: var(--ink); letter-spacing: 0.1px; }
-    .cand-seat {
-      display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
-      font-size: 11.5px; color: var(--muted); margin-top: 3px;
+    .term-k {
+      font-size: 11.5px; font-weight: 800; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--muted); flex-shrink: 0;
     }
-    .chip {
-      display: inline-block; font-size: 9.5px; font-weight: 800;
-      letter-spacing: 0.6px; text-transform: uppercase;
-      color: var(--navy-500); background: var(--gold-soft);
-      border: 1px solid var(--gold-line); border-radius: 4px;
-      padding: 1px 6px;
-    }
-    .cand.missing {
-      outline: 2px solid var(--deny); outline-offset: 4px;
-      border-radius: 6px;
-    }
+    .term-v { font-size: 14.5px; font-weight: 700; color: var(--ink); text-align: right; }
+    .prop-q { font-size: 15.5px; font-weight: 800; color: var(--ink); text-align: center; margin: 6px 0 16px; }
 
     /* Segmented Approve / Deny control */
     .seg {
@@ -200,6 +190,12 @@
       .seg-opt:hover input:not(:checked) + span { color: var(--ink); }
     }
 
+    /* Full-width Yes/No for the single proposition */
+    .seg-lg { display: flex; width: 100%; }
+    .seg-lg .seg-opt { flex: 1; }
+    .seg-lg .seg-opt span { width: 100%; min-width: 0; padding: 14px; font-size: 14.5px; }
+    .seg.missing { outline: 2px solid var(--deny); outline-offset: 4px; }
+
     /* Deadline notice */
     .deadline {
       display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -228,14 +224,6 @@
       box-shadow: 0 -6px 20px rgba(13, 31, 60, 0.07);
     }
     .submit-inner { max-width: 600px; margin: 0 auto; }
-    .meter { height: 5px; background: #e6e9f0; border-radius: 999px; overflow: hidden; margin-bottom: 9px; }
-    .meter span {
-      display: block; height: 100%; width: 0%;
-      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-bright) 100%);
-      border-radius: 999px; transition: width 0.25s ease;
-    }
-    .progress { font-size: 12px; font-weight: 700; color: var(--muted); text-align: center; margin-bottom: 9px; }
-    .progress.done { color: var(--approve); }
     .btn {
       width: 100%; padding: 14px; border: none; border-radius: var(--r-sm);
       background: var(--navy); color: #fff; font-size: 15px; font-weight: 800;
@@ -289,13 +277,13 @@
     <div class="hdr-eyebrow">IAFF Local 1463</div>
     <div class="hdr-org">Hawaii Fire Fighters Association</div>
     <div class="hdr-rule"></div>
-    <div class="hdr-context">PAC Endorsement Board Vote</div>
+    <div class="hdr-context">2026-2029 CBA Ratification Vote</div>
   </header>
   <main class="body" id="gateMain">
     <p class="intro"><span class="intro-title">Members only</span><br><span class="intro-sub">Enter the access password to open your ballot.</span></p>
     <div class="deadline" role="alert">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <span>Voting must be completed by 10:00 AM HST on Thursday, July&nbsp;9</span>
+      <span>Voting must be completed by 12:00 PM HST on Thursday, July&nbsp;16</span>
     </div>
     <div class="panel">
       <label class="field-label" for="gatePass">Access Password</label>
@@ -328,7 +316,7 @@
     </svg>
   </div>
   <h1 class="success-title">Voting Has Closed</h1>
-  <p class="success-sub">The deadline to submit a ballot was 10:00 AM HST on Thursday, July 9. No further votes can be accepted.</p>
+  <p class="success-sub">The deadline to submit a ballot was 12:00 PM HST on Thursday, July 16. No further votes can be accepted.</p>
 </div>
 
 <!-- Main ballot -->
@@ -337,19 +325,19 @@
     <div class="hdr-eyebrow">IAFF Local 1463</div>
     <div class="hdr-org">Hawaii Fire Fighters Association</div>
     <div class="hdr-rule"></div>
-    <div class="hdr-context">PAC Endorsement Board Vote</div>
+    <div class="hdr-context">2026-2029 CBA Ratification Vote</div>
     <div class="hdr-count" id="ballotCount"></div>
   </header>
 
   <main class="body" id="ballot">
-    <p class="intro"><span class="intro-title">Approve or deny each candidate</span><br><span class="intro-sub">A vote is required on every candidate in all four divisions.</span></p>
+    <p class="intro"><span class="intro-title">Ratify the 2026-2029 Collective Bargaining Agreement</span><br><span class="intro-sub">Review the terms below, then cast your Yes or No vote.</span></p>
 
     <div class="deadline" role="alert">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <span>Voting must be completed by 10:00 AM HST on Thursday, July&nbsp;9</span>
+      <span>Voting must be completed by 12:00 PM HST on Thursday, July&nbsp;16</span>
     </div>
 
-    <div class="error-msg" id="errorMsg" role="alert">Please fill in your name and vote on every candidate.</div>
+    <div class="error-msg" id="errorMsg" role="alert">Please enter your name and select Yes or No.</div>
 
     <form id="voteForm" onsubmit="return false">
       <input type="text" name="bot-field" style="display:none" tabindex="-1" aria-hidden="true">
@@ -359,120 +347,39 @@
         <input class="input" id="voterName" name="voter-name" type="text" placeholder="First and last name" autocomplete="name" required>
       </div>
 
-      <section class="slate" aria-labelledby="mauiHdr">
-        <div class="slate-hdr"><h2 id="mauiHdr">Maui Division</h2><span class="slate-note">Yes / No each</span></div>
-        <div class="slate-list" id="mauiList"></div>
-      </section>
-
-      <section class="slate" aria-labelledby="biHdr">
-        <div class="slate-hdr"><h2 id="biHdr">Hawaii Island Division</h2><span class="slate-note">Yes / No each</span></div>
-        <div class="slate-list" id="biList"></div>
-      </section>
-
-      <section class="slate" aria-labelledby="kauaiHdr">
-        <div class="slate-hdr"><h2 id="kauaiHdr">Kauai County</h2><span class="slate-note">Yes / No each</span></div>
-        <div class="slate-list" id="kauaiList"></div>
-      </section>
-
-      <section class="slate" aria-labelledby="oahuHdr">
-        <div class="slate-hdr"><h2 id="oahuHdr">Oahu Division</h2><span class="slate-note">Yes / No each</span></div>
-        <div class="slate-list" id="oahuList"></div>
+      <section class="slate" aria-labelledby="propHdr">
+        <div class="slate-hdr"><h2 id="propHdr">2026-2029 Collective Bargaining Agreement</h2><span class="slate-note">Employer Group Offer</span></div>
+        <div class="prop-body">
+          <p class="prop-lead">The Employer Group has offered the following terms for the 2026-2029 contract:</p>
+          <ul class="prop-terms">
+            <li><span class="term-k">Wage Increases</span><span class="term-v">3%, 3%, 4%, 4% over the four contract years</span></li>
+            <li><span class="term-k">Step Movements</span><span class="term-v">Restored</span></li>
+          </ul>
+          <div class="prop-q">Do you vote to ratify this agreement?</div>
+          <div class="seg seg-lg" id="ratifySeg" role="radiogroup" aria-label="Ratify the 2026-2029 CBA">
+            <label class="seg-opt approve"><input type="radio" name="ratify" value="Approve"><span>Yes, ratify</span></label>
+            <label class="seg-opt deny"><input type="radio" name="ratify" value="Deny"><span>No</span></label>
+          </div>
+        </div>
       </section>
     </form>
   </main>
 
   <div class="submit-bar">
     <div class="submit-inner">
-      <div class="meter" aria-hidden="true"><span id="meterFill"></span></div>
-      <div class="progress" id="progress" aria-live="polite">0 of 0 selected</div>
       <button class="btn" onclick="submitVote()">Submit My Vote</button>
     </div>
   </div>
 </div>
 
 <script>
-// PAC recommendation rosters. Each candidate is voted on individually.
-const MAUI = [
-  { name: 'Troy N. Hashimoto', district: 'Senate Dist. 5 · D' },
-  { name: 'Justin H. Woodson', district: 'House Dist. 9 · D' },
-  { name: 'Tyson K. Miyake', district: 'House Dist. 10 · D' },
-  { name: 'Kyle T. Yamashita', district: 'House Dist. 12 · D' },
-  { name: 'Mahinamalamalama M. Poepoe', district: 'House Dist. 13 · D' },
-  { name: 'Richard T. Bissen Jr.', district: 'Maui Mayor · NP' },
-  { name: 'Shane M. Sinenci', district: 'Council – East Maui · NP' },
-  { name: 'Tamara A.M. Paltin', district: 'Council – West Maui · NP' },
-  { name: 'Kelson Kauanoe Batangan', district: 'Council – Kahului · NP' },
-  { name: 'Thomas M. Cook', district: 'Council – South Maui · NP' },
-  { name: 'Nohelani M.T. U‘u-Hodgins', district: 'Council – Makawao-Haiku-Paia · NP' },
-  { name: 'Gabriel L. Johnson', district: 'Council – Lana‘i · NP' },
-  { name: 'Keani N.W. Rawlins-Fernandez', district: 'Council – Moloka‘i · NP' },
-  { name: 'Marvin Moniz', district: 'Council – Wailuku · NP' },
-];
-const BI = [
-  { name: 'Joy San Buenaventura', district: 'Senate Dist. 2' },
-  { name: 'Matthias Kusch', district: 'House Dist. 1' },
-  { name: 'Sue Lee Loy', district: 'House Dist. 2' },
-  { name: 'Christopher Todd', district: 'House Dist. 3' },
-  { name: 'Greggor Ilagan', district: 'House Dist. 4' },
-  { name: 'Jeanne Kapela', district: 'House Dist. 5' },
-  { name: 'Kirsten Kahaloa', district: 'House Dist. 6' },
-  { name: 'Nicole Lowen', district: 'House Dist. 7' },
-  { name: 'David Tarnas', district: 'House Dist. 8' },
-  { name: 'Heather Kimball', district: 'Council Dist. 1' },
-  { name: 'Dennis “Fresh” Onishi', district: 'Council Dist. 3' },
-  { name: 'Holeka Inaba', district: 'Council Dist. 8' },
-  { name: 'James Hustace', district: 'Council Dist. 9' },
-];
-const KAUAI = [
-  { name: 'Paul Applegate', district: 'Kauai County Council · NP' },
-  { name: 'Michelle Correa', district: 'Kauai County Council · NP' },
-  { name: 'Billy DeCosta', district: 'Kauai County Council · NP' },
-  { name: 'Fern Holland', district: 'Kauai County Council · NP' },
-  { name: 'Todd Ozaki', district: 'Kauai County Council · NP' },
-  { name: 'Dane Smith', district: 'Kauai County Council · NP' },
-];
-const OAHU = [
-  { name: 'Carol A. Fukunaga', district: 'Senate Dist. 11 · D' },
-  { name: 'Donna A. Kim', district: 'Senate Dist. 14 · D' },
-  { name: 'Glenn S. Wakai', district: 'Senate Dist. 15 · D' },
-  { name: 'Donovan M. Dela Cruz', district: 'Senate Dist. 17 · D' },
-  { name: 'Rachele Lamosao Cadiz', district: 'Senate Dist. 19 Vacancy · D' },
-  { name: 'Kurt Fevella', district: 'Senate Dist. 20 · R' },
-  { name: 'Gerald M. Gabbard', district: 'Senate Dist. 21 · D' },
-  { name: 'Christopher K.C. Lee', district: 'Senate Dist. 25 · D' },
-  { name: 'James Shigeo Wataru', district: 'House Dist. 18 · D' },
-  { name: 'Jason Kekahi Pacarro', district: 'House Dist. 19 · D' },
-  { name: 'Tina Grandinetti', district: 'House Dist. 20 · D' },
-  { name: 'Derek A. Turbin', district: 'House Dist. 21 · D' },
-  { name: 'Andrew Takuya Garrett', district: 'House Dist. 22 · D' },
-  { name: 'Ikaika M. Olds', district: 'House Dist. 23 · D' },
-  { name: 'Adrian Tam', district: 'House Dist. 24 · D' },
-  { name: 'Kim Coco Iwamoto', district: 'House Dist. 25 · D' },
-  { name: 'Jenna Takenouchi', district: 'House Dist. 27 · D' },
-  { name: 'Linda E. Ichiyama Chong', district: 'House Dist. 31 · D' },
-  { name: 'Samuel Satoru Kong', district: 'House Dist. 33 · D' },
-  { name: 'Gregg T. Takayama', district: 'House Dist. 34 · D' },
-  { name: 'Cory M.C.W. Chun', district: 'House Dist. 35 · D' },
-  { name: 'Mae Patricia Q. La Chica', district: 'House Dist. 37 · D' },
-  { name: 'Lauren K. Matsumoto', district: 'House Dist. 38 · R' },
-  { name: 'Anthony Makana Paris', district: 'House Dist. 42 · D' },
-  { name: 'Kristen K. Souza', district: 'House Dist. 43 · R' },
-  { name: 'Darius K. Kila', district: 'House Dist. 44 · D' },
-  { name: 'Amy A. Perruso', district: 'House Dist. 46 · D' },
-  { name: 'Sean Quinlan', district: 'House Dist. 47 · D' },
-  { name: 'Lisa C. Kitagawa-Akagi', district: 'House Dist. 48 · D' },
-  { name: 'Scot Matayoshi', district: 'House Dist. 49 · D' },
-  { name: 'Michael G.K. Lee', district: 'House Dist. 50 · D' },
-  { name: 'Matthew B. Weyer', district: 'Honolulu Council Dist. II · NP Special' },
-  { name: 'Thomas K. Waters', district: 'Honolulu Council Dist. IV · NP Special' },
-  { name: 'Tyler F. Dos Santos-Tam', district: 'Honolulu Council Dist. VI · NP Special' },
-  { name: 'Valerie A. Okimoto', district: 'Honolulu Council Dist. VIII · NP Special' },
-];
-const TOTAL = MAUI.length + BI.length + KAUAI.length + OAHU.length;
+// Single-question ratification ballot. SECRET BALLOT: turnout (voter name) and the
+// anonymous choice are stored in two separate tables server-side (see api/vote.js).
+const PROPOSITION = 'Ratify the 2026-2029 CBA';
 
-// Voting deadline: 10:00 AM HST, Thursday, July 9, 2026 (HST = UTC-10, no DST).
-// Also enforced server-side in api/vote.js — keep the two in sync.
-const DEADLINE_MS = Date.UTC(2026, 6, 9, 20, 0, 0);
+// Voting deadline: 12:00 PM (noon) HST, Thursday, July 16, 2026 (HST = UTC-10, no DST).
+// Also enforced server-side in api/vote.js; keep the two in sync.
+const DEADLINE_MS = Date.UTC(2026, 6, 16, 22, 0, 0);
 function votingClosed() { return Date.now() >= DEADLINE_MS; }
 function showClosed() {
   document.getElementById('gateScreen').style.display = 'none';
@@ -482,60 +389,21 @@ function showClosed() {
   window.scrollTo(0, 0);
 }
 
-function esc(s) {
-  return String(s).replace(/[&<>"']/g, function(c) {
-    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-  });
-}
-
-function rowHtml(prefix, i, c) {
-  const nm = prefix + i;
-  const parts = String(c.district).split(' · ');
-  const seat = esc(parts[0]);
-  const party = parts.length > 1 ? esc(parts.slice(1).join(' · ')) : '';
-  const chip = party ? '<span class="chip">' + party + '</span>' : '';
-  return '<div class="cand" data-row="' + nm + '">' +
-      '<div class="cand-info">' +
-        '<div class="cand-name">' + esc(c.name) + '</div>' +
-        '<div class="cand-seat">' + seat + chip + '</div>' +
-      '</div>' +
-      '<div class="seg" role="radiogroup" aria-label="Vote on ' + esc(c.name) + '">' +
-        '<label class="seg-opt approve"><input type="radio" name="' + nm + '" value="Approve"><span>Yes</span></label>' +
-        '<label class="seg-opt deny"><input type="radio" name="' + nm + '" value="Deny"><span>No</span></label>' +
-      '</div>' +
-    '</div>';
-}
-
-function renderRoster() {
-  document.getElementById('mauiList').innerHTML = MAUI.map(function(c, i) { return rowHtml('m', i, c); }).join('');
-  document.getElementById('biList').innerHTML = BI.map(function(c, i) { return rowHtml('b', i, c); }).join('');
-  document.getElementById('kauaiList').innerHTML = KAUAI.map(function(c, i) { return rowHtml('k', i, c); }).join('');
-  document.getElementById('oahuList').innerHTML = OAHU.map(function(c, i) { return rowHtml('o', i, c); }).join('');
-  updateProgress();
-}
-
-function updateProgress() {
-  const n = document.querySelectorAll('.seg input:checked').length;
-  const el = document.getElementById('progress');
-  el.textContent = n + ' of ' + TOTAL + ' selected';
-  el.classList.toggle('done', n === TOTAL);
-  const fill = document.getElementById('meterFill');
-  if (fill) fill.style.width = (TOTAL ? (n / TOTAL * 100) : 0) + '%';
-}
-
-document.addEventListener('change', function(e) {
-  if (e.target.matches('.seg input')) {
-    e.target.closest('.cand').classList.remove('missing');
-    updateProgress();
-  }
-});
-
-function getVote(prefix, i) {
-  const el = document.querySelector('input[name="' + prefix + i + '"]:checked');
+function getChoice() {
+  const el = document.querySelector('input[name="ratify"]:checked');
   return el ? el.value : null;
 }
 
-// Fetch and display the live ballot count (member-visible, no per-candidate breakdown)
+// Clear the "missing" highlight / error once a choice is made.
+document.addEventListener('change', function(e) {
+  if (e.target && e.target.name === 'ratify') {
+    const seg = document.getElementById('ratifySeg');
+    if (seg) seg.classList.remove('missing');
+    document.getElementById('errorMsg').classList.remove('show');
+  }
+});
+
+// Fetch and display the live ballot count (member-visible, no result breakdown).
 async function fetchCount() {
   try {
     const res = await fetch('/api/count', { headers: { 'x-vote-pass': votePass } });
@@ -547,55 +415,37 @@ async function fetchCount() {
     if (el) { el.textContent = label; el.style.display = 'inline-block'; }
     const sc = document.getElementById('successCount');
     if (sc) sc.textContent = label;
-  } catch (e) { /* silent fail — counter is non-critical */ }
+  } catch (e) { /* silent fail: counter is non-critical */ }
 }
 
 async function submitVote() {
   if (votingClosed()) return showClosed();
   const errorMsg = document.getElementById('errorMsg');
-  const nameVal  = document.getElementById('voterName').value.trim();
+  const nameEl = document.getElementById('voterName');
+  const nameVal = nameEl.value.trim();
   errorMsg.classList.remove('show');
-  document.getElementById('voterName').style.borderColor = '';
+  nameEl.style.borderColor = '';
 
-  let firstMissing = null, missingCount = 0;
-  if (!nameVal) {
-    document.getElementById('voterName').style.borderColor = '#92211d';
-    firstMissing = document.getElementById('voterName');
+  const choice = getChoice();
+  let firstMissing = null;
+  if (!nameVal) { nameEl.style.borderColor = '#92211d'; firstMissing = nameEl; }
+  if (!choice) {
+    const seg = document.getElementById('ratifySeg');
+    seg.classList.add('missing');
+    if (!firstMissing) firstMissing = seg;
   }
-
-  const votes = [];
-  function collect(prefix, arr, division) {
-    arr.forEach(function(c, i) {
-      const v = getVote(prefix, i);
-      const row = document.querySelector('.cand[data-row="' + prefix + i + '"]');
-      if (!v) {
-        row.classList.add('missing');
-        missingCount++;
-        if (!firstMissing) firstMissing = row;
-      } else {
-        row.classList.remove('missing');
-        votes.push({ division: division, name: c.name, district: c.district, vote: v });
-      }
-    });
-  }
-  collect('m', MAUI, 'Maui');
-  collect('b', BI, 'Hawaii Island');
-  collect('k', KAUAI, 'Kauai County');
-  collect('o', OAHU, 'Oahu');
 
   if (firstMissing) {
-    if (missingCount) {
-      errorMsg.textContent = (nameVal ? 'Vote' : 'Enter your name and vote') +
-        ' on ' + missingCount + ' remaining candidate' + (missingCount === 1 ? '' : 's') + '.';
-    } else {
-      errorMsg.textContent = 'Please enter your full name.';
-    }
+    errorMsg.textContent = !nameVal
+      ? (choice ? 'Please enter your full name.' : 'Enter your name and select Yes or No.')
+      : 'Please select Yes or No to cast your vote.';
     errorMsg.classList.add('show');
     const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     firstMissing.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' });
     return;
   }
 
+  const votes = [{ division: 'Ratification', name: PROPOSITION, district: '', vote: choice }];
   const botField = document.querySelector('input[name="bot-field"]').value;
   try {
     const res = await fetch('/api/vote', {
@@ -627,7 +477,6 @@ async function checkGate() {
     if (!res.ok) throw new Error('failed');
     document.getElementById('gateScreen').style.display = 'none';
     document.getElementById('mainForm').style.display = '';
-    renderRoster();
     fetchCount(); // show live ballot count after login
     document.getElementById('voterName').focus();
   } catch (e) {

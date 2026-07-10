@@ -1,10 +1,12 @@
-// Vercel serverless function — HFFA PAC Board vote results (Neon Postgres).
-// Results are intentionally OPEN (no password). SECRET BALLOT: turnout (who voted)
-// comes from the `voters` table and the tally comes from the anonymous `choices`
-// table — the two are never joined, so the response can show WHO voted and the
-// aggregate Yes/No counts, but never HOW any individual voted.
+// Vercel serverless function: HFFA ratification vote results (Neon Postgres).
+// The aggregate Yes/No tally + total are PUBLIC. The turnout name list (who voted)
+// is returned only to a request carrying the member access password. SECRET BALLOT:
+// turnout comes from `voters` and the tally from the anonymous `choices` table; the
+// two are never joined, so results can show WHO voted and the aggregate counts, but
+// never HOW any individual voted.
 const { neon } = require("@neondatabase/serverless");
 
+const VOTE_PASSWORD = process.env.VOTE_PASSWORD || "";
 const DB_URL =
   process.env.DATABASE_URL ||
   process.env.POSTGRES_URL ||
@@ -50,18 +52,26 @@ module.exports = async (req, res) => {
   if (!sql)
     return res.status(500).json({ error: "Storage not configured." });
 
+  // Aggregate tally is public; the turnout name list requires the access password.
+  const provided = req.headers["x-vote-pass"] || "";
+  const authed = VOTE_PASSWORD && provided === VOTE_PASSWORD;
+
   try {
     await ensureSchema();
-    // Two independent reads, never joined.
-    const voterRows = await sql`SELECT voter_name, ts FROM voters ORDER BY ts DESC`;
     const choiceRows = await sql`SELECT votes FROM choices`;
-
     const ballots = choiceRows.map((r) => ({ votes: r.votes || [] }));
+
+    // Only read the turnout list when authorized (still name-vote decoupled).
+    let voters = null;
+    if (authed) {
+      const voterRows = await sql`SELECT voter_name, ts FROM voters ORDER BY ts DESC`;
+      voters = voterRows.map((v) => ({ name: v.voter_name, ts: v.ts }));
+    }
 
     return res.status(200).json({
       total: choiceRows.length,
       candidates: tallyCandidates(ballots),
-      voters: voterRows.map((v) => ({ name: v.voter_name, ts: v.ts })),
+      voters: voters,
     });
   } catch (err) {
     console.error("Results error:", err);

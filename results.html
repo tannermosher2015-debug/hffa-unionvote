@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#0d1f3c">
-  <title>IAFF Local 1463 - PAC Endorsement Board Vote Results</title>
+  <title>IAFF Local 1463 - 2026-2029 CBA Ratification Vote Results</title>
   <style>
     :root {
       --navy: #0d1f3c;
@@ -72,6 +72,33 @@
     .tag.approve { color: var(--approve); background: #e7f2ea; border: 1px solid #bfe0c8; }
     .tag.deny { color: var(--deny); background: #fbe9e7; border: 1px solid #f2c9c4; }
 
+    /* Single-proposition result */
+    .result { padding: 18px 16px; }
+    .result-tags { display: flex; gap: 12px; justify-content: center; margin-bottom: 14px; flex-wrap: wrap; }
+    .result .tag { font-size: 14px; padding: 9px 18px; }
+    .result .tag .n { font-size: 18px; }
+    .rbar { height: 10px; background: #fbe9e7; border-radius: 999px; overflow: hidden; }
+    .rbar > span { display: block; height: 100%; background: var(--approve); border-radius: 999px; }
+
+    /* Password-gated turnout list */
+    .voter-gate { padding: 16px; }
+    .voter-gate-lead { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+    .voter-gate-row { display: flex; gap: 8px; }
+    .voter-gate .input {
+      flex: 1; min-width: 0; padding: 11px 13px; border-radius: var(--r-sm);
+      border: 1.5px solid var(--line); font-size: 16px; color: var(--ink);
+      outline: none; font-family: inherit; background: #fcfdfe;
+    }
+    .voter-gate .input:focus { border-color: var(--navy-500); box-shadow: 0 0 0 3px rgba(36,64,110,0.14); }
+    .btn-sm {
+      padding: 11px 18px; border: none; border-radius: var(--r-sm);
+      background: var(--navy); color: #fff; font-size: 13.5px; font-weight: 800;
+      font-family: inherit; cursor: pointer; white-space: nowrap;
+    }
+    .btn-sm:hover { background: var(--navy-700); }
+    .btn-sm:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+    .verr { color: var(--deny); font-weight: 600; font-size: 13px; margin-top: 10px; }
+
     .voters { background: var(--card); border-radius: var(--r-md); border: 1px solid var(--line); box-shadow: var(--shadow); overflow: hidden; margin-top: 4px; }
     .voters .slate-hdr { border-radius: 0; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -89,7 +116,7 @@
   <div class="hdr-eyebrow">IAFF Local 1463</div>
   <div class="hdr-org">Hawaii Fire Fighters Association</div>
   <div class="hdr-rule"></div>
-  <div class="hdr-context">PAC Endorsement Board Vote Results</div>
+  <div class="hdr-context">2026-2029 CBA Ratification Vote Results</div>
 </header>
 
 <main class="body" id="results">
@@ -100,8 +127,16 @@
     <p class="total" id="totalLine"></p>
     <div id="tallies"></div>
     <div class="voters">
-      <div class="slate-hdr"><h2>Ballots Cast</h2><span class="legend">Name / Time</span></div>
-      <table>
+      <div class="slate-hdr"><h2>Ballots Cast</h2><span class="legend">Members only</span></div>
+      <div class="voter-gate" id="voterGate">
+        <p class="voter-gate-lead">The turnout list (who has voted) is private. Enter the access password to view it. The Yes/No totals above stay public.</p>
+        <div class="voter-gate-row">
+          <input class="input" id="voterPass" type="password" placeholder="Access password" aria-label="Access password" autocomplete="off">
+          <button class="btn-sm" onclick="loadVoters()">View</button>
+        </div>
+        <div class="verr hidden" id="voterErr" role="alert">Incorrect password.</div>
+      </div>
+      <table class="hidden" id="voterTable">
         <thead><tr><th>Name</th><th>Time</th></tr></thead>
         <tbody id="voterRows"></tbody>
       </table>
@@ -131,39 +166,59 @@
       document.getElementById('totalLine').innerHTML =
         '<strong>' + d.total + '</strong> ballot' + (d.total === 1 ? '' : 's') + ' cast';
 
-      // Per-candidate tallies, grouped by division in first-seen order.
-      const divisions = [];
-      (d.candidates || []).forEach(function(c) {
-        let g = divisions.find(function(x) { return x.name === c.division; });
-        if (!g) { g = { name: c.division, rows: [] }; divisions.push(g); }
-        g.rows.push(c);
-      });
-      document.getElementById('tallies').innerHTML = divisions.map(function(g) {
-        const rows = g.rows.map(function(c) {
-          return '<div class="ct"><div>' +
-              '<div class="ct-name">' + esc(c.name) + '</div>' +
-              '<div class="ct-seat">' + seatFor(c.district) + chipFor(c.district) + '</div>' +
-            '</div><div class="ct-counts">' +
-              '<span class="tag approve">Yes <span class="n">' + c.Approve + '</span></span>' +
-              '<span class="tag deny">No <span class="n">' + c.Deny + '</span></span>' +
-            '</div></div>';
-        }).join('');
-        return '<section class="slate"><div class="slate-hdr"><h2>' + esc(g.name || 'Division') +
+      // One result card per proposition: Yes/No counts, percentages, and a bar.
+      document.getElementById('tallies').innerHTML = (d.candidates || []).map(function(c) {
+        const yes = c.Approve || 0, no = c.Deny || 0, tot = yes + no;
+        const yp = tot ? Math.round(yes / tot * 100) : 0;
+        const np = tot ? 100 - yp : 0;
+        return '<section class="slate"><div class="slate-hdr"><h2>' + esc(c.name) +
             '</h2><span class="legend">Yes / No</span></div>' +
-            '<div class="slate-list">' + rows + '</div></section>';
+            '<div class="result">' +
+              '<div class="result-tags">' +
+                '<span class="tag approve">Yes <span class="n">' + yes + '</span> &middot; ' + yp + '%</span>' +
+                '<span class="tag deny">No <span class="n">' + no + '</span> &middot; ' + np + '%</span>' +
+              '</div>' +
+              '<div class="rbar" role="img" aria-label="' + yp + ' percent Yes"><span style="width:' + yp + '%"></span></div>' +
+            '</div></section>';
       }).join('');
 
-      const voterRows = (d.voters || []).map(function(v) {
-        const t = new Date(v.ts).toLocaleString();
-        return '<tr><td>' + esc(v.name) + '</td><td class="time">' + esc(t) + '</td></tr>';
-      }).join('');
-      document.getElementById('voterRows').innerHTML =
-        voterRows || '<tr><td colspan="2" style="color:#5b6577">No ballots cast yet.</td></tr>';
+      // Turnout names are NOT in the public response; they load via loadVoters() with the password.
     } catch (e) {
       loading.classList.add('hidden');
       errEl.classList.remove('hidden');
     }
   }
+  // Load the password-gated turnout list. The aggregate tally above is already public.
+  async function loadVoters() {
+    const pass = document.getElementById('voterPass').value;
+    const err = document.getElementById('voterErr');
+    err.classList.add('hidden');
+    try {
+      const res = await fetch('/api/results', { headers: { 'x-vote-pass': pass } });
+      if (!res.ok) throw new Error('failed');
+      const d = await res.json();
+      if (!Array.isArray(d.voters)) {
+        err.textContent = 'Incorrect password.';
+        err.classList.remove('hidden');
+        return;
+      }
+      const rows = d.voters.map(function(v) {
+        const t = new Date(v.ts).toLocaleString();
+        return '<tr><td>' + esc(v.name) + '</td><td class="time">' + esc(t) + '</td></tr>';
+      }).join('');
+      document.getElementById('voterRows').innerHTML =
+        rows || '<tr><td colspan="2" style="color:#5b6577">No ballots cast yet.</td></tr>';
+      document.getElementById('voterGate').classList.add('hidden');
+      document.getElementById('voterTable').classList.remove('hidden');
+    } catch (e) {
+      err.textContent = 'Could not load. Check your connection and try again.';
+      err.classList.remove('hidden');
+    }
+  }
+  document.getElementById('voterPass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') loadVoters();
+  });
+
   loadResults();
 </script>
 </body>
