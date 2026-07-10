@@ -158,6 +158,7 @@
     }
     .term-v { font-size: 14.5px; font-weight: 700; color: var(--ink); text-align: right; }
     .prop-q { font-size: 15.5px; font-weight: 800; color: var(--ink); text-align: center; margin: 6px 0 16px; }
+    .gate-note { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-top: 2px; }
 
     /* Segmented Approve / Deny control */
     .seg {
@@ -281,6 +282,19 @@
   </header>
   <main class="body" id="gateMain">
     <p class="intro"><span class="intro-title">Members only</span><br><span class="intro-sub">Enter the access password to open your ballot.</span></p>
+
+    <section class="slate" aria-labelledby="gatePropHdr">
+      <div class="slate-hdr"><h2 id="gatePropHdr">2026-2029 Collective Bargaining Agreement</h2><span class="slate-note">Employer Group Offer</span></div>
+      <div class="prop-body">
+        <p class="prop-lead">Members are voting Yes or No to ratify the 2026-2029 CBA. The Employer Group has offered:</p>
+        <ul class="prop-terms">
+          <li><span class="term-k">Wage Increases</span><span class="term-v">3%, 3%, 4%, 4% over the four contract years</span></li>
+          <li><span class="term-k">Step Movements</span><span class="term-v">Restored</span></li>
+        </ul>
+        <p class="gate-note">Your ballot is anonymous: we can confirm that you voted, but never how you voted. One vote per member.</p>
+      </div>
+    </section>
+
     <div class="deadline" role="alert">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       <span>Voting must be completed by 12:00 PM HST on Thursday, July&nbsp;16</span>
