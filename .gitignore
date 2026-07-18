@@ -5,3 +5,7 @@ node_modules/
 # Secret-ballot PAC endorsement results. This repo auto-deploys to Vercel on
 # push, so committing these would publish raw ballot data. Keep them local only.
 PAC-Vote-Results-*
+
+# Local npm lockfile. The Vercel build has always run without it committed
+# (no `npm ci`), so keep it out of the repo.
+package-lock.json
