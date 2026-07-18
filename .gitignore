@@ -1,3 +1,7 @@
 .vercel
 .env*
 node_modules/
+
+# Secret-ballot PAC endorsement results. This repo auto-deploys to Vercel on
+# push, so committing these would publish raw ballot data. Keep them local only.
+PAC-Vote-Results-*
